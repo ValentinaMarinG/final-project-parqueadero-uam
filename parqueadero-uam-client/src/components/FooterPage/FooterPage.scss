@@ -1,0 +1,19 @@
+@import "../../scss/index.scss";
+
+.footer{
+    display: flex;
+    flex-direction: column;
+    bottom: 0%;
+    width: 100%;
+    background-color: $primary-color;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    font-size: 14px;
+
+    
+}
+
+.footer__logo{
+    height: 100px;
+}
