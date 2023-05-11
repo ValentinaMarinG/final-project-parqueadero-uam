@@ -7,6 +7,8 @@ const UserSchema = mongoose.Schema({
         type: String,
         unique: true
     },
+    departamento: String,
+    municipio: String,
     password: String,
     role: String,
     active: Boolean,
