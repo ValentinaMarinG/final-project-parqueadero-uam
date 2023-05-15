@@ -1,16 +1,25 @@
 const mongoose = require("mongoose");
 
+const tiposDocumentoValidos = ['Cédula de Ciudadania','Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'];
+
 const UserSchema = mongoose.Schema({
+    documentType:{
+        type:String,
+        enum:tiposDocumentoValidos
+    },
+    documentNumber: {
+        type:String,
+        primaryKey: true
+    },
     firstname: String,
     lastname: String,
     email: {
         type: String,
         unique: true
     },
-    departamento: String,
-    municipio: String,
+    phoneNumber : String,
     password: String,
-    role: String,
+    plate:[String],
     active: Boolean,
     avatar: String
 });
