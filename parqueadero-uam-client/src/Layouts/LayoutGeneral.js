@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Layout } from "antd";
+import { Layout } from "antd";
 import { MenuSider } from "../components/MenuComponents/MenuSider/MenuSider";
 import { MenuTop } from "../components/MenuComponents/MenuTop/MenuTop";
 import "./LayoutGeneral.scss";

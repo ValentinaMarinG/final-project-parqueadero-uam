@@ -1,0 +1,72 @@
+@import "../../scss/index.scss";
+
+body{
+    background-color: $primary-color;
+}
+
+.Layout-home{
+    background-color: $primary-color;
+    float: right;
+
+    &-header{
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        z-index: 1000;
+        padding: 0px;
+        background-color: $secondary-color;
+
+        &-left{
+            height: 60px;
+
+            &-logo{
+                width: 150px;
+                padding: 0 5px;
+                height: 75px;
+            }
+        }
+
+    }
+    &-content{
+        min-height: fit-content;
+        padding: 25px 0 0 25px;
+
+        &-carousel{
+            z-index: 1;
+        }
+    }
+}
+
+.button__right{
+    position: fixed;
+    top: 0;
+    right: 0;
+    color: $primary-color;
+    margin-right: 25px;
+    align-items: center;
+    display: flex;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 35px;
+    &:hover{
+        color: white;
+    }
+    &:focus,
+    &:active{
+        color: white;
+    }
+    .link{
+        align-items: center;
+        display: flex;
+        margin-top: 10px;
+    }
+    &-text{
+        margin-right: 10px;
+        font-family: sans-serif;
+        font-size: 20px;
+    }
+}

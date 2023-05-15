@@ -1,0 +1,175 @@
+@import "../../scss/index.scss";
+
+body {
+    background-color: $primary-color;
+  }
+  
+  .Layout-register {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .bottom-logo {
+    position: fixed;
+    bottom: 0;
+    left: 50vw;
+    transform: translateX(-50%);
+    width: 40vw;
+    height: auto;
+  }
+  
+  .middle-box {
+    position: absolute;
+    top: 5vw;
+    left: 50vw;
+    transform: translate(-50%);
+    width: 60vw;
+    height: 30vw;
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  @media screen and (max-width: 500px) {
+    .middle-box {
+      top: 40vw;
+      width: 80vw;
+      height: 90vw;
+    }
+  }
+
+  @media screen and (max-width: 300px) {
+    .middle-box {
+      top: 40vw;
+      width: 90vw;
+      height: 120vw;
+    }
+  }
+
+  @media screen and (min-width: 520px)  {
+    .middle-box {
+      top:40vw;
+      width: 65vw;
+      height: 60vw;
+    }
+  }
+
+  @media screen and (min-width: 550px)  {
+    .middle-box {
+      top:40vw;
+      width: 60vw;
+      height: 45vw;
+    }
+  }
+
+  @media screen and (min-width: 800px)  {
+    .middle-box {
+      top:10vw;
+      width: 62vw;
+      height: 45vw;
+    }
+  }
+
+  @media screen and (min-width: 900px)  {
+    .middle-box {
+      top:50vw;
+      width: 62vw;
+      height: 45vw;
+    }
+  }
+
+  @media screen and (min-width: 1000px)  {
+    .middle-box {
+      top:7vw;
+      width: 60vw;
+      height: 37vw;
+    }
+  }
+  @media screen and (min-width: 1200px)  {
+    .middle-box {
+      top:5vw;
+      width: 60vw;
+      height: 30vw;
+    }
+  }
+
+
+  .middle-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 4.5vw;
+    background-color: $secondary-color;
+  }
+  
+  .middle-box h1 {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-top: 1vw;
+    font-size: 2vw;
+    font-family: sans-serif;
+    color: $primary-color;
+    }
+
+    .container {
+      padding: 5px;
+      margin: 10px;
+    }
+    
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      margin-left: 2rem;
+      margin-right: 2rem;
+    }
+
+    .cancel-button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      width: 10rem;
+      height: 3rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 0.5rem;
+    }
+    
+    .register-button {
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      width: 10rem;
+      height: 3rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 0.5rem;
+    }
+
+    .Select_Custom{
+      width: 28.4vw;
+      height: 2.5vw;
+    }
+    
+    .texto-datos{
+        flex-direction: column;
+        align-items: center;
+        font-family: sans-serif;
+        color: black;
+        font-size: inherit;
+        text-align: center;
+        width: 100%;
+        margin-top: 1%;
+        &-subrayado{
+            text-decoration: underline;
+      }
+    }
+
+
+  
+  
+  
+

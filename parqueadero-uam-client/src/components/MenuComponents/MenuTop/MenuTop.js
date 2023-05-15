@@ -40,7 +40,7 @@ export const MenuTop = (props) => {
         onClick={showModal} 
         >
           <LogoutOutlined />
-        </Button>
+      </Button>
         <Modal  title="Cerrar sesión" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
           <p>¿Desea cerrar sesión?</p>
         </Modal>
