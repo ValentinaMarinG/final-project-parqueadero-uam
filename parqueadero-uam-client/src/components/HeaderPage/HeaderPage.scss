@@ -1,0 +1,29 @@
+@import "../../scss/index.scss";
+
+.header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    z-index: 1000;
+    background-color: $secondary-color;
+    line-height: 0px;
+
+    &-container{
+        min-height: 60px;
+
+        &__left{
+            display:flex;
+            height: 50px;
+    
+            &__logo{
+                width: 100px;
+                padding: 0 10px;
+            }
+        }
+    }
+    
+}
