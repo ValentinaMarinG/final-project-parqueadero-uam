@@ -4,26 +4,31 @@ const jwt = require("../utils/jwt");
 const axios = require("axios");
 
 const register = async (req, res) => {
-    const { firstname, lastname, email, departamento, municipio, password } = req.body;
-
+    const { documentType, documentNumber, firstname, lastname, email, phoneNumber, plate, password} = req.body;
+    
+    if ((documentType ==="Cédula de Ciudadania" || documentType ==="Tarjeta de identidad" ) && (documentNumber[0]=== "0" || (documentNumber.length !=10 && documentNumber.length !=8 ))){
+      res.status(400).send({ msg: "El número de documento es inválido" });
+    };
+    if (documentType ==="Cédula de Extranjería" &&  documentNumber.length !=10 ){
+      res.status(400).send({ msg: "La cédula de extranjería es inválida" });
+    };
+    if (!documentNumber) res.status(400).send({ msg: "La cedula es requerida" });
     if (!email) res.status(400).send({ msg: "El email es requerido" });
     if (!password) res.status(400).send({ msg: "La contraseñas es requerida" });
-
-    const response = await axios.get("https://www.datos.gov.co/resource/xdk5-pm3f.json");
-    const ResponseData = response.data;
-    const DepartamentoResponse = ResponseData.find(ResponseData =>{ return ResponseData.departamento === departamento});
-    const MunicipioResponse = ResponseData.find(ResponseData =>{return ResponseData.municipio === municipio});
+    if (!phoneNumber) res.status(400).send({ msg: "El número de telefono es requerido" });
+    if (phoneNumber.length != 10) res.status(400).send({ msg: "El número de telefono es inválido" });
 
     const salt = bcrypt.genSaltSync(10);
     const hashPassword = bcrypt.hashSync(password, salt);
 
     const user = new User({
+        documentType,
+        documentNumber,
         firstname,
         lastname,
         email: email.toLowerCase(),
-        departamento: DepartamentoResponse.departamento,
-        municipio: MunicipioResponse.municipio,
-        role: "user",
+        phoneNumber,
+        plate,
         active: false,
         password: hashPassword,
     });
