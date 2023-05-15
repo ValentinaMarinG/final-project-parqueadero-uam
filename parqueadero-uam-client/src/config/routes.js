@@ -4,6 +4,7 @@ import { SignIn } from "../pages/admin/SignIn";
 import { Contact } from "../pages/Contact";
 import { Home } from "../pages/Home";
 import { NotFound } from "../pages/NotFound/NotFound";
+import { Register } from "../pages/Register/Register";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [
@@ -14,7 +15,8 @@ const AdminRoutes = [
 const GeneralRoutes = [
     {path:"/", component:Home, layout:LayoutGeneral},
     {path:"/contact", component:Contact, layout:LayoutGeneral},
-    {path:"*", component:NotFound, layout:LayoutGeneral}
+    {path:"*", component:NotFound, layout:LayoutGeneral},
+    {path:"/register", component:Register, layout:Register}
 ];
 
 /* ... -> Split operator: Poner todo al mismo nivel */
