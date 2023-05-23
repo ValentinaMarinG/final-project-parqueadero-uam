@@ -4,6 +4,7 @@ import { MenuUnfoldOutlined, MenuFoldOutlined, LogoutOutlined } from "@ant-desig
 import "./MenuTop.scss";
 import Logo from "../../../assets/png/logo.png";
 import Modal from "antd/es/modal/Modal";
+import { Link } from "react-router-dom";
 
 //MenuTop recibe las propiedades y se las comparte a menuSider
 //Las propiedades las recibe de LayoutGeneral+
