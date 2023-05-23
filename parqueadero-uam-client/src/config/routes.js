@@ -6,6 +6,7 @@ import { Home } from "../pages/Home/Home";
 import { LogIn } from "../pages/LogIn/LogIn";
 import { NotFound } from "../pages/NotFound/NotFound";
 import { Register } from "../pages/Register/Register";
+import UserPage, { default as User } from "../pages/User/User";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [
@@ -18,7 +19,7 @@ const GeneralRoutes = [
     {path:"/contact", component:Contact, layout:LayoutGeneral},
     {path:"*", component:NotFound, layout:LayoutGeneral},
     {path:"/LogIn", component:LogIn, layout:LogIn},
-    {path:"/signin", component:NotFound, layout:NotFound},
+    {path:"/user/profile", component:User, layout:UserPage},
     {path:"/register", component:Register, layout:Register}
 ];
 

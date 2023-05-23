@@ -4,6 +4,10 @@ import { MenuUnfoldOutlined, MenuFoldOutlined, LogoutOutlined } from "@ant-desig
 import "./MenuTop.scss";
 import Logo from "../../../assets/png/logo.png";
 import Modal from "antd/es/modal/Modal";
+import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom/dist";
+
+
 
 //MenuTop recibe las propiedades y se las comparte a menuSider
 //Las propiedades las recibe de LayoutGeneral+
@@ -11,6 +15,7 @@ import Modal from "antd/es/modal/Modal";
 
 export const MenuTop = (props) => {
   const { menuCollapsed, setMenuCollapsed } = props;
+  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -18,7 +23,9 @@ export const MenuTop = (props) => {
   };
   const handleOk = () => {
     setIsModalOpen(false);
+    navigate("/");
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
