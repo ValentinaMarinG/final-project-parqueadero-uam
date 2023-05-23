@@ -50,6 +50,12 @@ export const Register = () => {
                     placeholder="Nombre"
                     name="nombre"
                     onChange={handleChange}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Ingresa tú nombre!',
+                      },
+                    ]}
                   />
                 </Col>
                 <Col span={12}>
