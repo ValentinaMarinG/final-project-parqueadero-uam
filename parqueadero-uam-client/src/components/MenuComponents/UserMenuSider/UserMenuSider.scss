@@ -1,0 +1,77 @@
+@import "../../../scss/index.scss";
+
+.ant-menu {
+  transition: transform 0.3s cubic-bezier(0, 0.52, 0, 1);
+  padding-left: 0px;
+  width: var(--left-menu-width);
+  margin-top: 55px;
+}
+
+.menu-item-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-inline-start: 20px;
+}
+
+.ant-menu-item-selected {
+  background-color: aliceblue;
+  color: black;
+  padding-right: 0px;
+  margin-right: 0px;
+}
+
+.ant-menu-submenu {
+  padding-left: 15px;
+  padding-right: 29px;
+  padding-top: 0px;
+  margin-right: 10px;
+}
+
+.ant-menu-hidden {
+  padding-left: 20px;
+}
+
+.ant-menu-submenu-open {
+  padding-left: 8px;
+  padding-right: 0px;
+}
+
+.ant-menu-submenu-activate {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.ant-menu-submenu-title {
+  padding-top: 0px;
+}
+
+.navbar-text {
+  font-family: sans-serif;
+  font-size: 12px;
+  padding-right: 10px;
+}
+
+.ant-menu-title-content {
+  flex: auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-inline-start: 0px;
+  padding-inline-start: 0px;
+  justify-content: left;
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
+.menu-item-content {
+  display: flex;
+  align-items: center;
+}
+
+.ant-layout-sider-children {
+  background-color: white;
+}

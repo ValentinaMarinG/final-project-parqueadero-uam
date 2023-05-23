@@ -57,7 +57,7 @@ export const LogIn = (props) => {
                     iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                 />
                 <Button className='button-log-in' type="primary">
-                    <Link to={"/../signin"}>Iniciar sesión</Link>
+                    <Link to={"/../user/profile"}>Iniciar sesión</Link>
                 </Button>
             </div>
             <div className='registrarse'>
