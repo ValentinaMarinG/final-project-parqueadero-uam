@@ -1,72 +1,202 @@
 @import "../../scss/index.scss";
 
-body{
-    background-color: $primary-color;
+body {
+  background-color: $primary-color;
 }
 
-.Layout-home{
-    background-color: $primary-color;
-    float: right;
+.Layout-home {
+  background-color: $primary-color;
 
-    &-header{
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        width: 100%;
-        z-index: 1000;
-        padding: 0px;
-        background-color: $secondary-color;
-
-        &-left{
-            height: 60px;
-
-            &-logo{
-                width: 150px;
-                padding: 0 5px;
-                height: 75px;
-            }
-        }
-
-    }
-    &-content{
-        min-height: fit-content;
-        padding: 25px 0 0 25px;
-
-        &-carousel{
-            z-index: 1;
-        }
-    }
-}
-
-.button__right{
+  &-header {
     position: fixed;
     top: 0;
-    right: 0;
-    color: $primary-color;
-    margin-right: 25px;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    z-index: 1000;
+    padding: 0px;
+    background-color: $secondary-color;
+
+    &-left {
+      height: 60px;
+
+      &-logo {
+        width: 150px;
+        padding: 0 5px;
+        height: 75px;
+      }
+    }
+  }
+
+  &-content {
+    min-height: calc(100vh - 80px);
+    padding-top: 80px;
+    overflow: auto;
+
+    &-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    &-titulo {
+      font-family: sans-serif;
+      font-weight: bold;
+      color: $primary-color;
+      font-size: x-large;
+    }
+
+    &-carousel {
+      position: relative;
+      padding-top: 5px;
+      margin-top: 20px; 
+      width: 80%; 
+      max-width: 100vw; 
+      margin: 0 auto; 
+      bottom: auto;
+
+      .slick-dots{
+        &-bottom{
+          bottom: auto;
+        }
+      }
+
+      .ant-card-body{
+        padding: 10px;
+      }
+    }
+    
+    .meta-titulo{
+      text-align: center;
+    }
+  }
+
+  &-footer{
+    background-color: $primary-color;
+    height: auto;
+  }
+}
+
+.button__right {
+  position: fixed;
+  top: 0;
+  right: 0;
+  color: $primary-color;
+  margin-right: 25px;
+  align-items: center;
+  display: flex;
+  margin-top: 5px;
+  cursor: pointer;
+  font-size: 35px;
+
+  &:hover {
+    color: white;
+  }
+
+  &:focus,
+  &:active {
+    color: white;
+  }
+
+  .link {
     align-items: center;
     display: flex;
     margin-top: 10px;
-    cursor: pointer;
-    font-size: 35px;
-    &:hover{
-        color: white;
-    }
-    &:focus,
-    &:active{
-        color: white;
-    }
-    .link{
-        align-items: center;
-        display: flex;
-        margin-top: 10px;
-    }
-    &-text{
-        margin-right: 10px;
-        font-family: sans-serif;
-        font-size: 20px;
-    }
+  }
+
+  &-text {
+    margin-right: 10px;
+    font-family: sans-serif;
+    font-size: 20px;
+  }
 }
+
+.titulo-home{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  color: $secondary-color;
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.texto{
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  color: white;
+  font-size: medium;
+}
+
+.footer-logo {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 25vw;
+  height: auto;
+}
+
+.div{
+  display: flex;
+  justify-content:flex-end;
+  padding-top: 21px;
+  padding-right: 17vw;
+
+  .button-link{
+    font-family: sans-serif;
+    color: $secondary-color;
+    text-decoration: underline;
+    font-size: unset;
+  }
+}
+
+.mapa{
+  width: 875px;
+  height: 286px;
+}
+
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 92%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  text-align: center;
+  font-family: sans-serif;
+  border-radius: 5px;
+}
+
+.overlay-title {
+  font-size: x-large;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-family: sans-serif;
+}
+
+.overlay-description {
+  font-size: medium;
+  font-family: sans-serif;
+
+  &-number{
+    background-color: white;
+    border-radius: 10px;
+    color: black;
+  }
+}
+
+
+
+

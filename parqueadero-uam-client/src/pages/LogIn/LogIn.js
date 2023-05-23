@@ -69,6 +69,9 @@ export const LogIn = (props) => {
                 </label>
                 </Row>
             </div>
+            <div>
+                <label></label>
+            </div>
         </Content>
         <img src={Logo} alt="Logo" className="bottom-logo" />
     </Layout>
