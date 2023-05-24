@@ -66,7 +66,7 @@ const onSubmit = (values) => {
   console.log("Form Data:", Object.fromEntries(formData));
 
    axios
-    .post("http://localhost:5000/api/v1/auth/register", values)
+    .post("http://localhost:5000/api/v1/users", formData)
     .then((response) => {
       // Manejar la respuesta del servidor
       console.log(response.data);
