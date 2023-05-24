@@ -8,7 +8,7 @@ tiposDocumentoValidos = ['Cédula de Ciudadanía', 'Cédula de Extranjería', 'P
 
 
 class User:
-    def __init__(self, documentType, documentNumber, firstname, lastname, email, phoneNumber, password, plate, active, avatar):
+    def __init__(self, documentType, documentNumber, firstname, lastname, email, phoneNumber, password, plate, active, avatar, department,municipality):
         self.documentType = documentType
         self.documentNumber = documentNumber
         self.firstname = firstname
@@ -19,6 +19,8 @@ class User:
         self.plate = plate
         self.active = active
         self.avatar = avatar
+        self.department = department
+        self.municipality = municipality
 
     @staticmethod
     def to_json(User):

@@ -15,20 +15,24 @@ def authentication_login():
     email = request.json.get("email")
     password = request.json.get("password")
 
-    
     user = db['users'].find_one({"email": email})
-    rol= 'user'
+    rol = 'user'
     if not user:
         user = db['delegate'].find_one({"email": email})
         rol = 'delegate'
         if not user:
             user = db['admin'].find_one({"email": email})
             rol = 'admin'
-    if  not user or not check_password_hash(user['password'], password):
+
+    if not user or not check_password_hash(user['password'], password):
         return {"error": "Wrong email or password"}, HTTPStatus.UNAUTHORIZED
+
+    if not user.get('active', False):
+        return {"error": "Account is not active"}, HTTPStatus.UNAUTHORIZED
 
     access_token = create_access_token(identity=str(user["_id"]), additional_claims={'rol': rol})
 
     response = {"access_token": access_token}
 
     return response, HTTPStatus.OK
+
