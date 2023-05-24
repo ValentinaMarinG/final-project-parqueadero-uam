@@ -42,7 +42,7 @@ const validationSchema = Yup.object().shape({
     .required("El tipo de documento es requerido")
     .oneOf(
       [
-        "Tarjeta de identidad",
+        "Tarjeta de identidad",
         "Cédula de Ciudadanía",
         "Cédula de Extranjería",
         "Pasaporte",
