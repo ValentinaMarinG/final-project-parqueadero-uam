@@ -3,20 +3,29 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button, Input } from 'antd';
 import { UserOutlined, EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
 import * as Yup from 'yup';
+import axios from 'axios';
 
 const initialValues = {
-  username: '',
+  email: '',
   password: ''
 };
 
 const validationSchema = Yup.object().shape({
-  username: Yup.string().required('El correo institucional es requerido'),
+  email: Yup.string().required('El correo institucional es requerido'),
   password: Yup.string().required('La contraseña es requerida')
 });
 
 const onSubmit = (values) => {
   console.log(values);
-  // Aquí puedes realizar las acciones necesarias con los datos del formulario, como enviar una solicitud al servidor, etc.
+  axios.post('http://localhost:5000/api/v1/auth/login', values)
+    .then(response => {
+      // Manejar la respuesta del servidor
+      console.log(response.data);
+    })
+    .catch(error => {
+      // Manejar el error si ocurre
+      console.error(error);
+    });
 };
 
 export const LoginForm = () => {
@@ -28,15 +37,15 @@ export const LoginForm = () => {
     >
       <Form>
         <div className='form-group'>
-          <label htmlFor='username'>Usuario</label>
+          <label htmlFor='email'>Usuario</label>
           <Field
-            id='username'
-            name='username'
+            id='email'
+            name='email'
             as={Input}
             prefix={<UserOutlined />}
             placeholder='Correo institucional'
           />
-          <ErrorMessage name='username' component='div' className='error-message' />
+          <ErrorMessage name='email' component='div' className='error-message' />
         </div>
         <br/>
         <div className='form-group'>
