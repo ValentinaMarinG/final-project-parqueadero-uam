@@ -1,7 +1,7 @@
 @import "../../../scss/index.scss";
 
 .menu-sider{
-    position: fixed;
+    position: absolute;
     top: 50px;
     height: 100%;
     z-index: 1000;
@@ -11,7 +11,7 @@
     justify-content: center;
     align-items: center;
     width: var(--left-menu-width);
-
+}
     .menu-item-icon{
         display: flex;
         justify-content: center;
@@ -85,5 +85,4 @@
         font-size: 12px;
         padding-left: 19px;
     }
-}
 

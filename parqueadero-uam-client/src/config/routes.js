@@ -24,7 +24,7 @@ const GeneralRoutes = [
     {path:"/signin", component:NotFound, layout:NotFound},
     {path:"/delegate", component:Delegate, layout:Delegate},
     {path:"/delegate/parkings/economia", component:Delegate, layout:Delegate},
-    {path:"/delegate/parkings/vagon", component:Delegate, layout:Delegate}
+    {path:"/delegate/parkings/vagon", component:Delegate, layout:Delegate},
     {path:"/user/profile", component:User, layout:UserPage},
     {path:"/register", component:Register, layout:Register}
 ];
