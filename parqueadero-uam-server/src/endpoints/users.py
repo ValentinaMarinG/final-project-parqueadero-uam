@@ -7,12 +7,52 @@ from bson import json_util
 import os
 from src.database import db
 from bson import ObjectId
+from cerberus import Validator
 
 from src.models.user import User
 users = Blueprint("users",
                     __name__,
                     url_prefix="/api/v1/users")
 
+
+schema = {
+    'documentType':{'type': 'string', 'allowed':['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'],'required': True},
+    'documentNumber':{'type': 'string', 'required': True},
+    'firstname':{'type': 'string', 'required': True},
+    'lastname':{'type': 'string', 'required': True},
+    'email': {
+        'type': 'string',
+        'required': True,
+        'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 
+        'coerce': lambda x: x.lower()  
+    },
+    'phoneNumber':{'type': 'string', 'required': True},
+    'password':{'type': 'string', 'required': True}, 
+    'plate': {
+        'type': 'list',
+        'schema': {
+            'type': 'string',
+            'min': 0,
+            'max': 100
+        },
+        'minlength': 0,
+        'maxlength': 10
+    },
+    'active':{'type':'boolean'},
+    'avatar':{'type':'string'}
+}
+
+
+schema_patch = {
+            'documentType': {'type': 'string', 'allowed': ['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'], 'required': False},
+            'documentNumber': {'type': 'string', 'required': False},
+            'firstname': {'type': 'string', 'required': False},
+            'lastname': {'type': 'string', 'required': False},
+            'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
+            'phoneNumber': {'type': 'string', 'required': False},
+            'password': {'type': 'string', 'required': False},
+            'plate': {'type': 'list', 'schema': {'type': 'string', 'minlength': 0, 'maxlength': 100}, 'required': False},
+        }
 
 @users.route("/all", methods=["GET"])
 @jwt_required()
@@ -102,8 +142,11 @@ def create_user():
             active=False,
             avatar=avatar_relative_path 
         )
-        
         usuario_json = usuario.to_json(usuario)
+        validator = Validator(schema)
+        if not validator.validate(usuario_json):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         # Guardar el usuario en la base de datos
         db['users'].insert_one(usuario_json)
 
@@ -147,6 +190,12 @@ def update_user():
                 # Guardar el archivo de imagen en una ubicación deseada
                 avatar.save('../uploads/avatar' + avatar.filename)
                 user['avatar'] = avatar.filename
+        
+        updated_fields = {field: value for field, value in request.form.items() if field in schema}
+        validator = Validator(schema_patch)
+        if not validator.validate(updated_fields):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         
         # Actualizar el documento en la base de datos
         db['users'].update_one({"_id": obj_id}, {"$set": user})
@@ -196,6 +245,11 @@ def update_user_admin(id):
                 avatar.save('../uploads/avatar' + avatar.filename)
                 user['avatar'] = avatar.filename
         
+        updated_fields = {field: value for field, value in request.form.items() if field in schema}
+        validator = Validator(schema_patch)
+        if not validator.validate(updated_fields):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         # Actualizar el documento en la base de datos
         db['users'].update_one({"_id": obj_id}, {"$set": user})
 
