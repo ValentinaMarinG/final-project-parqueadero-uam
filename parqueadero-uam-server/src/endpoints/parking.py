@@ -169,7 +169,7 @@ def delete_parking(id):
     
 
 
-@parking.route('/<string:id>/plate', methods=['PUT'])
+@parking.route('/<string:id>/plateI', methods=['PUT'])
 @jwt_required()
 def add_plate_to_parqueadero(id):
     # Verificar si el usuario tiene rol de delegado
@@ -200,7 +200,7 @@ def add_plate_to_parqueadero(id):
 
     return jsonify({'message': 'Placa agregada correctamente'})
 
-@parking.route('/<string:id>/plate', methods=['PUT'])
+@parking.route('/<string:id>/plateO', methods=['PUT'])
 @jwt_required()
 def remove_plate_from_parqueadero(id):
     # Verificar si el usuario tiene rol de delegado
