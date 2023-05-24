@@ -9,6 +9,8 @@ import { Register } from "../pages/Register/Register";
 import { Delegate } from "../pages/Delegate/Delegate";
 
 import UserPage, { default as User } from "../pages/User/User";
+import { EditUser } from "../pages/EditUser/EditUser";
+import { SetPassword } from "../pages/SetPassword/SetPassword";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [
@@ -25,8 +27,10 @@ const GeneralRoutes = [
     {path:"/delegate", component:Delegate, layout:Delegate},
     {path:"/delegate/parkings/economia", component:Delegate, layout:Delegate},
     {path:"/delegate/parkings/vagon", component:Delegate, layout:Delegate},
-    {path:"/user/profile", component:User, layout:UserPage},
-    {path:"/register", component:Register, layout:Register}
+    {path:"/user/profile", component:User, layout:User},
+    {path:"/register", component:Register, layout:Register},
+    {path:"/user/edit", component:User, layout:EditUser},
+    {path:"/user/setpassword", component:User, layout:SetPassword}
 ];
 
 /* ... -> Split operator: Poner todo al mismo nivel */

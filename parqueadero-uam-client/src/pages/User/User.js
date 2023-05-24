@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Avatar, Col, Row } from "antd";
+import { Layout, Avatar, Col, Row, Table, Button } from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import cupula from "../../assets/jpg/sobre_uam.jpg";
 import { UserMenuSider } from "../../components/MenuComponents/UserMenuSider/UserMenuSider";
@@ -9,6 +9,19 @@ import "./User.scss";
 import Input from "antd";
 
 const nombre = "Jeronimo";
+const apellido = "Cortés";
+const correo = "jc@gmail.com";
+const tipoDocumento = "Tarjeta de Identidad";
+const documento = "123456789";
+const contacto = "3125678909";
+
+const columns = [
+  {
+    title: "Mis Placas",
+    dataIndex: "placa",
+    key: "placa",
+  }
+];
 
 const UserPage = () => {
   const [menuCollapsed, setMenuCollapsed] = useState(false);
@@ -33,29 +46,46 @@ const UserPage = () => {
             </label>
           </div>
           <div className="container-principal">
-            <Row className="row1" gutter={[16, 16]}>
-                <Avatar
-                  className="container-principal-avatar"
-                  size={90}
-                  icon={<UserOutlined />}/>
-              <div className="container-principal-info">
+            <Row gutter={[120, 120]}>
+                <div className="container-principal-info">
                   <label className="titulo-profie">¡Hola, {nombre}!</label>
                 </div>
-            </Row>
-            <Row>
               <Col>
-              <div>
-                <label className="label-titulo-info">Tu  información personal</label>
+              <Avatar
+                  className="container-principal-avatar"
+                  size={140}
+                  icon={<UserOutlined />}/>
+              </Col>
+              <Col>
+              <div className="conatiner-info">
+                <label className="label-titulo-info">Tu información personal</label>
                 <br/>
-                <label className="label">Nombre: <label className="custom-label"></label></label>
+                <label className="label">Nombre: <label className="custom-label">{nombre} {apellido}</label></label>
                 <br/>
-                <label className="label">Correo: <label className="custom-label"></label></label>
+                <label className="label">Correo: <label className="custom-label">{correo}</label></label>
                 <br/>
-                <label className="label">Tipo de documento: <label className="custom-label"></label></label>
+                <label className="label">Tipo de documento: <label className="custom-label">{tipoDocumento}</label></label>
                 <br/>
-                <label className="label">Documento: <label className="custom-label"></label></label>
+                <label className="label">Documento: <label className="custom-label">{documento}</label></label>
                 <br/>
-                <label className="label">Contacto: <label className="custom-label"></label> </label>
+                <label className="label">Contacto: <label className="custom-label">{contacto}</label></label>
+              </div>
+              <Button className="button-edit">
+                Editar mi información
+              </Button>
+              </Col>
+            </Row>
+          </div>
+          <div className="container-table">
+            <Row gutter={[50, 50]}>
+              <Col>
+              <Table className="table" columns={columns}></Table>
+              </Col>
+              <Col>
+              <div className="button-container">
+              <Button className="button-table">Agregar placa</Button>
+              <br/>
+              <Button className="button-table">Eliminar placa</Button>
               </div>
               </Col>
             </Row>

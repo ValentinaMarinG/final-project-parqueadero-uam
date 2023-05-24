@@ -52,9 +52,11 @@
     background-color: $primary-color;
     top: 0%;
     left: 50%;
-    margin-top: 25px;
-    height: 250px;
+    margin-top: 10px;
+    height: 300px;
     display: flex;
+    align-content: flex-end;
+    flex-wrap: wrap;
 
     &-avatar{
       position: absolute;
@@ -72,12 +74,16 @@
   .custom-label {
     margin-top: 5px;
     margin-bottom: 5px;
+    font-weight: lighter;
   }
 
   .label {
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 25px;
+    margin-bottom: 25yarpx;
     color:white;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: medium;
   }
 
   .titulo-profie{
@@ -85,18 +91,61 @@
     position: fixed;
     font-family: sans-serif;
     font-weight: bold;
-    font-size: large;
+    font-size: x-large;
     color: $secondary-color;
-    left: 40%;
+    left: 36%;
+    margin-bottom: 20px;
   }
 
   .label-titulo-info{
     top: 60px;
     position: fixed;
     color: white;
+    margin-bottom: 40px;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: large;
+    align-self: center;
   }
-
 
   .row1{
     display: flex;
+  }
+
+  .container-info{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .container-table{
+    display: flex;
+    justify-content: center;
+  }
+
+  .table{
+    width: 40vw;
+    height: 20vw;
+  }
+
+  .button-edit{
+    margin-top: 25px;
+    background-color: $secondary-color;
+    color: black;
+  }
+
+  .conatiner-info{
+    margin-top: 20px;
+  }
+
+  .button-table{
+    margin-top: 30px;
+    margin-bottom: 30px;
+    background-color: $secondary-color;
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
