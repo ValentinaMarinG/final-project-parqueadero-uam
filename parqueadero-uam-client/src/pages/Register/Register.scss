@@ -122,7 +122,7 @@ body {
     .button-container {
       display: flex;
       justify-content: space-between;
-      margin-top: 0.5rem;
+      margin-top: 3.5rem;
       margin-left: 2rem;
       margin-right: 2rem;
     }
@@ -167,6 +167,14 @@ body {
             text-decoration: underline;
       }
     }
+    .select-custom {
+      width: 100%;
+    }
+    .formulario-dimensiones{
+      height: 310px;
+      overflow-y: auto;
+    }
+    
 
   
   
