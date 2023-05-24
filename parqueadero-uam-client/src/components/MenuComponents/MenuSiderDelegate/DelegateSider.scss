@@ -1,17 +1,17 @@
 @import "../../../scss/index.scss";
 
 .menu-sider{
-    position: absolute;
+    position: fixed;
     top: 50px;
     height: 100%;
     z-index: 1000;
     transition: all 0.3s ease-in-out;
     border-right: 10px !important;
-    background-color:white;
+    background-color: white;
     justify-content: center;
     align-items: center;
     width: var(--left-menu-width);
-}
+
     .menu-item-icon{
         display: flex;
         justify-content: center;
@@ -85,4 +85,5 @@
         font-size: 12px;
         padding-left: 19px;
     }
+}
 

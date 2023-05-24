@@ -39,6 +39,7 @@
   transform: translate(-50%);
   z-index: 1;
   margin-top: 5%;
+  
 
     &-texto{
         flex-direction: column;
@@ -71,6 +72,11 @@
         justify-content: left;
         font-family: sans-serif;
     }
+
+    .inputs-box{
+        margin-top: 160px;
+    }
+
 }
   
 .container-secundario{
@@ -122,6 +128,7 @@
         font-family: sans-serif;
         font-size: 16px;
         color: white;
+        margin-top: 30px;
     }
     
     .button-link {
@@ -153,3 +160,7 @@
     width: 35vw;
     height: auto;
 }
+
+.button-log-in {
+    width: 100%;
+  }

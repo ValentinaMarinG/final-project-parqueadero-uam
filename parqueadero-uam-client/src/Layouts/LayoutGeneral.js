@@ -22,7 +22,9 @@ export const LayoutGeneral = (props) => {
             setMenuCollapsed={setMenuCollapsed}
           />
         </Header>
-        <Content className="Layout-general-content">{children}</Content>
+        <Content className="Layout-general-content">
+          
+        </Content>
         <Footer className='Layout-general-footer'>
           <FooterPage></FooterPage>
         </Footer>
