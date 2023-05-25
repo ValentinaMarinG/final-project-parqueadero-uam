@@ -5,13 +5,13 @@ import cupula from "../../assets/jpg/sobre_uam.jpg";
 import { UserMenuSider } from "../../components/MenuComponents/UserMenuSider/UserMenuSider";
 import { MenuTop } from "../../components/MenuComponents/MenuTop/MenuTop";
 import { FooterPage } from "../../components/FooterPage/FooterPage";
-import "./EditUser.scss";
+import "./SetPassword.scss";
 import Logo from "../../assets/png/Logo_UAM.png";
 
 const { Option } = Select;
 const url_uam ="https://www.autonoma.edu.co/uamvirtual?errorcode=4#seccion-uamvirtual";
 
-export const EditUser = () => {
+export const SetPassword = () => {
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -30,28 +30,17 @@ export const EditUser = () => {
   };
 
   return (
-    <Layout className="Layout-register">
+    <Layout className="setpassword">
       <div className="middle-box">
-        <div className="register-box">
-          <h1>Editar Información Usuario</h1>
-          <Row>
-            <label className="datos-texto">
-              Ingresa los datos de tu{" "}
-              <span
-                className="texto-datos-subrayado"
-                onClick={() => window.open(url_uam)}
-              >
-                Cuenta UAM®
-              </span>
-            </label>
-          </Row >
+        <div className="setpassword-box">
+          <h1>Cambiar contraseña</h1>
           <Form onFinish={handleChange}>
-            <div className="container-edit">
+            <div className="container">
               <Row className="row">
                 <Col span={12}>
                   <Input
-                    placeholder="Nombre"
-                    name="nombre"
+                    placeholder="Contraseña actual"
+                    name="contraseñaactual"
                     onChange={handleChange}
                   />
                 </Col>
@@ -60,8 +49,8 @@ export const EditUser = () => {
               <Row className="row">
                 <Col span={12}>
                   <Input
-                    placeholder="Apellido"
-                    name="apellido"
+                    placeholder="Nueva contraseña"
+                    name="contraseñanueva"
                     onChange={handleChange}
                   />
                 </Col>
@@ -70,13 +59,13 @@ export const EditUser = () => {
               <Row className="row">
                 <Col span={12}>
                   <Input
-                    placeholder="Celular"
-                    name="celular"
+                    placeholder="Confirmar nueva contraseña"
+                    name="confirmacontraseña"
                     onChange={handleChange}
                   />
                 </Col>
               </Row>
-              <div className="button-d">
+              <div className="div-button">
                 <Button className="button" danger onClick={() => window.location.replace("/")}>
                   Cancelar
                 </Button>
@@ -85,7 +74,7 @@ export const EditUser = () => {
                   type="primary"
                   onClick={() => window.location.replace("/LogIn")}
                 >
-                  Regístrate
+                  Aceptar
                 </Button>
               </div>
             </div>
