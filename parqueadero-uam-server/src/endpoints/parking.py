@@ -10,6 +10,35 @@ parking = Blueprint("parking",
                     __name__,
                     url_prefix="/api/v1/parking")
 
+schema = {
+    'name':{'type': 'string', 'required': True},
+    'lastname':{'type': 'string', 'required': True},
+    'email': {
+        'type': 'string',
+        'required': True,
+        'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 
+        'coerce': lambda x: x.lower()  
+    },
+    'phoneNumber':{'type': 'string', 'required': True},
+    'password':{'type': 'string', 'required': True}, 
+    'active':{'type':'boolean'},
+    'avatar':{'type':'string'},
+    'position':{'type':'string','required': True},
+}
+
+
+schema_patch = {
+            'documentType': {'type': 'string', 'allowed': ['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'], 'required': False},
+            'documentNumber': {'type': 'string', 'required': False},
+            'firstname': {'type': 'string', 'required': False},
+            'lastname': {'type': 'string', 'required': False},
+            'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
+            'phoneNumber': {'type': 'string', 'required': False},
+            'position':{'type':'string','required': False},
+}
+
+
+
 
 @parking.route("/all", methods=["GET"])
 @jwt_required()
