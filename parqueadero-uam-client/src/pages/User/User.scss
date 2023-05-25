@@ -29,4 +29,124 @@
         left:$widthLeftMenu
     }
 
-  
+  .content-title {
+      margin-top: 40px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      display: flex;
+      font-size: xx-large;
+      font-family: sans-serif;
+      color: $secondary-color;
+      font-weight: bold;
+    
+      &-subtitle {
+        font-size: x-large;
+        font-weight: normal;
+        color: white;
+      }
+  }
+
+  .principal{
+    display: flex;
+    background-color: $primary-color;
+    top: 0%;
+    left: 50%;
+    margin-top: 10px;
+    height: 250px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    &-avatar{
+      position: absolute;
+      top: 60px;
+      left: 70px;
+      transform: translate(-50%, -50%);
+      background-color: #ccc;
+    }
+
+    &-info{
+      height: auto;
+      top: 20px;
+    }
+  }
+
+  .custom-label {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-weight: lighter;
+  }
+
+  .label {
+    margin-top: 25px;
+    margin-bottom: 25yarpx;
+    color:white;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: medium;
+  }
+
+  .titulo-profie{
+    top: 20px;
+    position: fixed;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: x-large;
+    color: $secondary-color;
+    left: 36%;
+    margin-bottom: 20px;
+  }
+
+  .label-titulo-info{
+    top: 60px;
+    color: white;
+    margin-bottom: 40px;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: large;
+    align-self: center;
+  }
+
+  .row1{
+    display: flex;
+  }
+
+  .container-info{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .container-table{
+    display: flex;
+    justify-content: center;
+  }
+
+  .table{
+    width: 40vw;
+    height: 20vw;
+  }
+
+  .button-edit{
+    margin-top: 25px;
+    background-color: $secondary-color;
+    color: black;
+    margin-right: 20px;
+  }
+
+  .conatiner-info{
+    margin-top: 20px;
+  }
+
+  .button-table{
+    margin-top: 30px;
+    margin-bottom: 30px;
+    background-color: $secondary-color;
+  }
+
+  .button-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
