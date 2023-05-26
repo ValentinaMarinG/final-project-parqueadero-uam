@@ -25,7 +25,7 @@ def authentication_login():
             rol = 'admin'
 
     if not user or not check_password_hash(user['password'], password):
-        return {"error": "Wrong email or password"}, HTTPStatus.UNAUTHORIZED
+        return {"error": "Wrong email or password"}, HTTPStatus.BAD_REQUEST
 
     if not user.get('active', False):
         return {"error": "Account is not active"}, HTTPStatus.UNAUTHORIZED

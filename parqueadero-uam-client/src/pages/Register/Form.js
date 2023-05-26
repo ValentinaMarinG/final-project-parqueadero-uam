@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, setFieldValue } from "formik";
 import { Button, Input, Select, Row, Col } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
 
@@ -56,32 +57,46 @@ const validationSchema = Yup.object().shape({
   municipality: Yup.string().required("El municipio es requerido"),
 });
 
-const onSubmit = (values) => {
-  const { confirmarContraseña, ...data } = values;
-
-  const formData = new FormData();
-  for (let key in data) {
-    formData.append(key, data[key]);
-  }
-  console.log("Form Data:", Object.fromEntries(formData));
-
-   axios
-    .post("http://localhost:5000/api/v1/users", formData)
-    .then((response) => {
-      // Manejar la respuesta del servidor
-      console.log(response.data);
-    })
-    .catch((error) => {
-      // Manejar el error si ocurre
-      console.error(error);
-    }); 
-};
-
 export const RegisterForm = () => {
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
   const [departamentos, setDepartamentos] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  const navigate = useNavigate();
+
+  const onSubmit = (values, { setSubmitting, resetForm }) => {
+    const { confirmarContraseña, ...data } = values;
+
+    const formData = new FormData();
+    for (let key in data) {
+      formData.append(key, data[key]);
+    }
+    console.log("Form Data:", Object.fromEntries(formData));
+
+    axios
+      .post("http://localhost:5000/api/v1/users", formData)
+      .then((response) => {
+        if (response.status === 201) {
+          setShowSuccessMessage(true);
+          setTimeout(() => {
+            navigate("/LogIn");
+          }, 2000);
+
+          navigate("/LogIn");
+        }
+        console.log(response.data);
+      })
+      .catch((error) => {
+        // Manejar el error si ocurre
+        console.error(error);
+      })
+      .finally(() => {
+        setSubmitting(false);
+        resetForm();
+      });
+  };
 
   useEffect(() => {
     fetchDepartamentos();
@@ -133,6 +148,16 @@ export const RegisterForm = () => {
     setFieldValue("documentType", value);
   };
 
+  useEffect(() => {
+    let timer;
+    if (showSuccessMessage) {
+      timer = setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [showSuccessMessage]);
+
   return (
     <div className="formulario-dimensiones">
       <Formik
@@ -140,8 +165,13 @@ export const RegisterForm = () => {
         validationSchema={validationSchema}
         onSubmit={onSubmit}
       >
-        {({ values, setFieldValue }) => (
+        {({ values, setFieldValue, setSubmitting, resetForm }) => (
           <Form style={{ padding: "10px" }}>
+            {showSuccessMessage && (
+              <div style={{ color: "green", marginBottom: "10px" }}>
+                Registro exitoso
+              </div>
+            )}
             <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
               <Col span={12}>
                 <Field name="firstname" as={Input} placeholder="Nombre" />
