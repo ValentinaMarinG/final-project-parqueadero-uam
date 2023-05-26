@@ -37,7 +37,9 @@ def create_app(test_config=None):
     app.config['MONGO_DBNAME'] = "software_db"
     app.config['ENVIRONMENT'] = "development"    
     app.config["JWT_SECRET_KEY"] = environ.get('DEVELOPMENT_JWT_SECRET_KEY')
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600  # Duración de 1 hora para los tokens de acceso
+    app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 2592000  # Duración de 30 días para los tokens de actualización
+
     app.config.from_object(config_class)        
     CORS(app)
     app.register_blueprint(users)

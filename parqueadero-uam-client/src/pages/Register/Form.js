@@ -57,6 +57,27 @@ const validationSchema = Yup.object().shape({
   municipality: Yup.string().required("El municipio es requerido"),
 });
 
+const onSubmit = (values) => {
+  const { confirmarContraseña, ...data } = values;
+
+  const formData = new FormData();
+  for (let key in data) {
+    formData.append(key, data[key]);
+  }
+  console.log("Form Data:", Object.fromEntries(formData));
+
+  axios
+    .post("http://localhost:5000/api/v1/auth/register", values)
+    .then((response) => {
+      // Manejar la respuesta del servidor
+      console.log(response.data);
+    })
+    .catch((error) => {
+      // Manejar el error si ocurre
+      console.error(error);
+    }); 
+};
+
 export const RegisterForm = () => {
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
   const [departamentos, setDepartamentos] = useState([]);

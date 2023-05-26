@@ -5,11 +5,39 @@ from werkzeug.utils import secure_filename
 import os
 from src.database import db
 from bson import ObjectId
+from cerberus import Validator
 
 from src.models.admin import Admin
 admin = Blueprint("admin",
                     __name__,
                     url_prefix="/api/v1/admin")
+
+schema = {
+    'documentType':{'type': 'string', 'allowed':['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'],'required': True},
+    'documentNumber':{'type': 'string', 'required': True},
+    'firstname':{'type': 'string', 'required': True},
+    'lastname':{'type': 'string', 'required': True},
+    'email': {
+        'type': 'string',
+        'required': True,
+        'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 
+        'coerce': lambda x: x.lower()  
+    },
+    'phoneNumber':{'type': 'string', 'required': True},
+    'password':{'type': 'string', 'required': True}, 
+    'active':{'type':'boolean'},
+    'avatar':{'type':'string'},
+}
+
+
+schema_patch = {
+            'documentType': {'type': 'string', 'allowed': ['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'], 'required': False},
+            'documentNumber': {'type': 'string', 'required': False},
+            'firstname': {'type': 'string', 'required': False},
+            'lastname': {'type': 'string', 'required': False},
+            'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
+            'phoneNumber': {'type': 'string', 'required': False},
+}
 
 
 @admin.route("/all", methods=["GET"])
@@ -47,34 +75,6 @@ def create_admin():
         rol = claims.get('rol')
         if rol != 'admin':
             return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        # Obtener el archivo de imagen
-        avatar = request.files.get('avatar')
-
-        # Asignar un valor predeterminado a avatar_path
-        avatar_path = None
-
-        if avatar:
-            # Obtener la ruta absoluta de la carpeta "uploads"
-            uploads_folder = os.path.abspath('uploads')
-
-            # Verificar si la carpeta "uploads" existe, de lo contrario, crearla
-            if not os.path.exists(uploads_folder):
-                os.makedirs(uploads_folder)
-
-            # Obtener la ruta absoluta de la carpeta "avatar" dentro de "uploads"
-            avatar_folder = os.path.join(uploads_folder, 'avatar')
-
-            # Verificar si la carpeta "avatar" existe, de lo contrario, crearla
-            if not os.path.exists(avatar_folder):
-                os.makedirs(avatar_folder)
-
-            # Guardar el archivo de imagen en la carpeta "avatar"
-            avatar_filename = secure_filename(avatar.filename)
-            avatar_path = os.path.join(avatar_folder, avatar_filename)
-            avatar.save(avatar_path)
-
-            # Obtener la ruta relativa del archivo incluyendo "uploads"
-            avatar_relative_path = os.path.join('uploads', os.path.relpath(avatar_path, uploads_folder))
 
 
         # Crear una instancia de delegado con los datos recibidos
@@ -87,10 +87,14 @@ def create_admin():
             phoneNumber=request.form['phoneNumber'],
             password=request.form['password'],
             active=False,
-            avatar=avatar_relative_path,
+            avatar="",
         )
         
         admin_json = admin.to_json(admin)
+        validator = Validator(schema)
+        if not validator.validate(admin_json):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         # Guardar el    admin en la base de datos
         db['admin'].insert_one(admin_json)
 
@@ -118,7 +122,13 @@ def update_admin(id):
         if 'documentType' in request.form:
             admin['documentType'] = request.form['documentType']
         if 'documentNumber' in request.form:
-            admin['documentNumber'] = request.form['documentNumber']
+            #validar numero de documento
+            documentNumber=request.form['documentNumber']
+            # Verificar si ya existe un usuario con el mismo documentNumber
+            existing_admin = db['admin'].find_one({'documentNumber': documentNumber})
+            if existing_admin:
+                return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST  
+            admin['documentNumber'] = documentNumber
         if 'firstname' in request.form:
             admin['firstname'] = request.form['firstname']
         if 'lastname' in request.form:
@@ -129,12 +139,12 @@ def update_admin(id):
             admin['phoneNumber'] = request.form['phoneNumber']
         if 'password' in request.form:
             admin['password'] = request.form['password']
-        if 'avatar' in request.files:
-            avatar = request.files['avatar']
-            if avatar:
-                # Guardar el archivo de imagen en una ubicación deseada
-                avatar.save('../uploads/avatar' + avatar.filename)
-                admin['avatar'] = avatar.filename
+        
+        updated_fields = {field: value for field, value in request.form.items() if field in schema}
+        validator = Validator(schema_patch)
+        if not validator.validate(updated_fields):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         
         # Actualizar el documento en la base de datos
         db['admin'].update_one({"_id": obj_id}, {"$set": admin})
