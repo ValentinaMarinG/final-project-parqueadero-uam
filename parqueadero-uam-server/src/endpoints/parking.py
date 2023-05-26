@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt,get_jwt_identity
 from http import HTTPStatus
 from src.database import db
 from bson import ObjectId
+from bson.errors import InvalidId
 from cerberus import Validator
 
 from src.models.parking import Parking
@@ -10,36 +11,69 @@ parking = Blueprint("parking",
                     __name__,
                     url_prefix="/api/v1/parking")
 
+    
 schema = {
     'name':{'type': 'string', 'required': True},
-    'lastname':{'type': 'string', 'required': True},
-    'email': {
-        'type': 'string',
-        'required': True,
-        'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 
-        'coerce': lambda x: x.lower()  
+    'type':{'type': 'string', 'required': True},
+    'numberofCars':{'type': 'integer', 'required': True},
+    'payable':{'type': 'boolean', 'required': True}, 
+    'price':{'type':'float', 'required':True},
+    'plate': {
+        'type': 'list',
+        'required':False,
+        'schema': {
+            'type': 'string',
+            'min': 0,
+            'max': 100
+        },
+        'minlength': 0,
+        'maxlength': 10
     },
-    'phoneNumber':{'type': 'string', 'required': True},
-    'password':{'type': 'string', 'required': True}, 
-    'active':{'type':'boolean'},
-    'avatar':{'type':'string'},
-    'position':{'type':'string','required': True},
+    'payments': {
+        'type': 'list',
+        'required': False,
+        'schema': {
+            'type': 'boolean'
+        },
+        'minlength': 0,
+        'maxlength': 10
+    },
+    'categoryId': {'required': True}
 }
 
 
-schema_patch = {
-            'documentType': {'type': 'string', 'allowed': ['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'], 'required': False},
-            'documentNumber': {'type': 'string', 'required': False},
-            'firstname': {'type': 'string', 'required': False},
-            'lastname': {'type': 'string', 'required': False},
-            'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
-            'phoneNumber': {'type': 'string', 'required': False},
-            'position':{'type':'string','required': False},
+schema_patch= {
+    'name':{'type': 'string', 'required': False},
+    'type':{'type': 'string', 'required': False},
+    'numberofCars':{'type': 'int', 'required': False},
+    'payable':{'type': 'boolean', 'required': False}, 
+    'price':{'type':'float'},
+    'plate': {
+        'type': 'list',
+        'required':False,
+        'schema': {
+            'type': 'string',
+            'min': 0,
+            'max': 100
+        },
+        'minlength': 0,
+        'maxlength': 10
+    },
+    'payments': {
+        'type': 'list',
+        'required': False,
+        'schema': {
+            'type': 'boolean'
+        },
+        'minlength': 0,
+        'maxlength': 10
+    },
+    'categoryId': {'required': False}
 }
 
 
 
-
+#Listar todos los parqueaderos, permisos de admin
 @parking.route("/all", methods=["GET"])
 @jwt_required()
 def read_all():
@@ -52,6 +86,8 @@ def read_all():
     return jsonify(resultado)
 
 
+
+#Listar la información de un parqueadero por su ID, permisos de admin
 @parking.route('/<string:id>', methods=['GET'])
 @jwt_required()
 def read_one(id):
@@ -67,6 +103,10 @@ def read_one(id):
 
     return {"data": parking}, HTTPStatus.OK
 
+
+
+
+#Crear parqueadero, permisos de admin
 @parking.route('/', methods=['POST'])
 @jwt_required()
 def create_parking():
@@ -114,6 +154,10 @@ def create_parking():
         )
         
         parking_json = parking.to_json(parking)
+        validator = Validator(schema)
+        if not validator.validate(parking_json):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         # Guardar el parqueadero en la base de datos
         db['parking'].insert_one(parking_json)
 
@@ -123,6 +167,7 @@ def create_parking():
 
 
 
+#Actualizar parqueadero, permisos de admin
 @parking.route('/<string:id>', methods=['PUT','PATCH'])
 @jwt_required()
 def update_parking(id):
@@ -165,6 +210,12 @@ def update_parking(id):
         if 'plate' in request.form:
             parking['plate'] = request.form.getlist('plate[]')
         
+        updated_fields = {field: value for field, value in request.form.items() if field in schema}
+        validator = Validator(schema_patch)
+        if not validator.validate(updated_fields):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
+        
         # Actualizar el documento en la base de datos
         db['parking'].update_one({"_id": obj_id}, {"$set": parking})
 
@@ -175,6 +226,7 @@ def update_parking(id):
 
 
 
+#Eliminar parqueadero, permisos de admin
 @parking.route('/<string:id>', methods=['DELETE'])
 @jwt_required()
 def delete_parking(id):
@@ -198,53 +250,72 @@ def delete_parking(id):
     
 
 
-@parking.route('/<string:id>/plateI', methods=['PUT'])
+
+#Agregar placa debido al ingreso de un vehiculo, permisos de delegado
+@parking.route('/plate', methods=['POST'])
 @jwt_required()
-def add_plate_to_parqueadero(id):
+def add_plate_to_parking():
     # Verificar si el usuario tiene rol de delegado
     jwt_data = get_jwt()
     rol = jwt_data.get('rol')
     if rol != 'delegate':
         return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
+    delegate_id = get_jwt_identity()
+    obj_id = ObjectId(delegate_id)
+    delegate = db['delegates'].find_one({"_id": obj_id})
+    id= delegate['parkingId']
+    if not id :
+        return jsonify({'error': 'No tienes un parqueadero asignado'}), HTTPStatus.BAD_REQUEST
+
+    
     # Obtener el parqueadero por su ID
     parqueadero = db['parking'].find_one({'_id': ObjectId(id)})
     if not parqueadero:
         return jsonify({'error': 'Parqueadero no encontrado'}), HTTPStatus.NOT_FOUND
 
-    # Obtener la placa del cuerpo de la solicitud
-    plate = request.form.getlist('plate')
+    plate = request.form.get('plate')
     # Verificar si la placa ya existe en la lista
     if plate in parqueadero['plate']:
         return jsonify({'error': 'La placa ya existe en el parqueadero'}), HTTPStatus.BAD_REQUEST
 
     # Agregar la placa a la lista
     parqueadero['plate'].append(plate)
-    if parqueadero['playable'] == True:
+    if parqueadero['payable']:
         parqueadero['payments'].append(False)
-    else :
+    else:
         parqueadero['payments'].append(True)
     # Actualizar el parqueadero en la base de datos
-    db['parking'].update_one({'_id': id}, {'$set': {'plate': parqueadero['plate'], 'payments':parqueadero['payments']}})
+    db['parking'].update_one({'_id': ObjectId(id)}, {'$set': {'plate': parqueadero['plate'], 'payments': parqueadero['payments']}})
 
     return jsonify({'message': 'Placa agregada correctamente'})
 
-@parking.route('/<string:id>/plateO', methods=['PUT'])
+
+
+#Eliminar una placa debido al retiro de un vehiculo, permisos de delegado
+@parking.route('/plate', methods=['DELETE'])
 @jwt_required()
-def remove_plate_from_parqueadero(id):
+def remove_plate_from_parking():
     # Verificar si el usuario tiene rol de delegado
     jwt_data = get_jwt()
     rol = jwt_data.get('rol')
     if rol != 'delegate':
         return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
+    delegate_id = get_jwt_identity()
+    obj_id = ObjectId(delegate_id)
+    delegate = db['delegates'].find_one({"_id": obj_id})
+    id= delegate['parkingId']
+    if not id :
+        return jsonify({'error': 'No tienes un parqueadero asignado'}), HTTPStatus.BAD_REQUEST
+    
     # Obtener el parqueadero por su ID
-    parqueadero = db['parking'].find_one({'_id': id})
+    parqueadero = db['parking'].find_one({'_id': ObjectId(id)   })
     if not parqueadero:
         return jsonify({'error': 'Parqueadero no encontrado'}), HTTPStatus.NOT_FOUND
 
     # Obtener la placa a eliminar del cuerpo de la solicitud
-    plate = request.json.get('plate')
+    plate = request.form['plate']
 
     # Verificar si la placa existe en la lista
     if plate not in parqueadero['plate']:
@@ -257,7 +328,7 @@ def remove_plate_from_parqueadero(id):
     parqueadero['plate'].remove(plate)
     del parqueadero['payments'][index]
     # Actualizar el parqueadero en la base de datos
-    db['parking'].update_one({'_id': id}, {'$set': {'plate': parqueadero['plate'], 'payments': parqueadero['payments']}})
+    db['parking'].update_one({'_id': ObjectId(id)}, {'$set': {'plate': parqueadero['plate'], 'payments': parqueadero['payments']}})
 
     return jsonify({'message': 'Placa eliminada correctamente'})
 

@@ -9,6 +9,7 @@ from src.database import db
 from bson import ObjectId
 from cerberus import Validator
 
+
 from src.models.user import User
 users = Blueprint("users",
                     __name__,
@@ -30,6 +31,7 @@ schema = {
     'password':{'type': 'string', 'required': True}, 
     'plate': {
         'type': 'list',
+        'required':False,
         'schema': {
             'type': 'string',
             'min': 0,
@@ -87,7 +89,12 @@ def create_user():
         # Verificar si ya existe un usuario con el mismo documentNumber
         existing_user = db['users'].find_one({'documentNumber': documentNumber})
         if existing_user:
-            return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST        
+            return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST 
+        email=request.form['email']
+        # Verificar si ya existe un usuario con el mismo email
+        existing_user_em = db['users'].find_one({'email': email})
+        if existing_user_em:
+            return {'error': 'Ya existe un usuario con el mismo correo'}, HTTPStatus.BAD_REQUEST        
         # Crear una instancia de Usuario con los datos recibidos    
         usuario = User(
             documentType=request.form['documentType'],
@@ -154,7 +161,7 @@ def update_user():
 #Añadir placa a lista de usuarios, permisos de usuarios
 @users.route("/plate", methods=['POST'])
 @jwt_required()
-def añadir_placa(): 
+def add_plate(): 
     claims = get_jwt()
     rol = claims.get('rol')
     if not rol == 'user':
@@ -167,7 +174,7 @@ def añadir_placa():
     placa_buscada = request.form['plate']
     if 'plate' in user and placa_buscada in user['plate']:
         return jsonify({'error': 'La placa ya existe'}), HTTPStatus.BAD_REQUEST
-    db['users'].update_one({"_id": user_id}, {"$push": {"plate": placa_buscada}})
+    db['users'].update_one({"_id": obj_id}, {"$push": {"plate": placa_buscada}})
     return jsonify({'message': 'Placa agregada correctamente'}), HTTPStatus.OK
 
 
@@ -175,7 +182,7 @@ def añadir_placa():
 #Elimar una placa a la lista de usuarios, permiso usuarios
 @users.route("/plate", methods=['DELETE'])
 @jwt_required()
-def añadir_placa(): 
+def delete_plate(): 
     claims = get_jwt()
     rol = claims.get('rol')
     if not rol == 'user':
@@ -188,13 +195,16 @@ def añadir_placa():
     placa_buscada = request.form['plate']
     if 'plate' in user and not placa_buscada in user['plate']:
         return jsonify({'error': 'La placa no existe'}), HTTPStatus.BAD_REQUEST
-    db['users'].update_one({"_id": user_id}, {"$pull": {"plate": placa_buscada}})
+    db['users'].update_one({"_id": obj_id}, {"$pull": {"plate": placa_buscada}})
     return jsonify({'message': 'Placa eliminada correctamente'}), HTTPStatus.OK
+
+
+
 
 #Buscar mi carro, permisos de usuario
 @users.route('/plate', methods=['GET'])
 @jwt_required()
-def buscar_placa():
+def find_car():
     claims = get_jwt()
     rol = claims.get('rol')
     if not rol == 'user':
@@ -202,7 +212,7 @@ def buscar_placa():
     user_id = get_jwt_identity()
     obj_id = ObjectId(user_id)
     user = db['users'].find_one({"_id": obj_id})
-    placa_buscada = request.args.get('plate')  # Obtén la placa desde la query string
+    placa_buscada = request.form['plate']  
     if placa_buscada not in user.get('plate', []):
             return jsonify({'error': 'Placa no encontrada para el usuario'}), HTTPStatus.NOT_FOUND
 
@@ -258,7 +268,8 @@ def read_one_admin(documento):
 
 #Crear un usuario, permiso de admin
 @users.route('/admin', methods=['POST'])
-def create_user():
+@jwt_required()
+def create_user_admin():
     try:
         claims = get_jwt()
         rol = claims.get('rol')
@@ -270,8 +281,13 @@ def create_user():
         # Verificar si ya existe un usuario con el mismo documentNumber
         existing_user = db['users'].find_one({'documentNumber': documentNumber})
         if existing_user:
-            return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST  
+            return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST
         
+        email=request.form['email']
+        # Verificar si ya existe un usuario con el mismo documentNumber
+        existing_user_em = db['users'].find_one({'email': email})
+        if existing_user_em:
+            return {'error': 'Ya existe un usuario con el mismo correo'}, HTTPStatus.BAD_REQUEST  
         usuario = User(
             documentType=request.form['documentType'],
             documentNumber=request.form['documentNumber'],
@@ -330,7 +346,12 @@ def update_user_admin(documento):
         if 'lastname' in request.form:
             user['lastname'] = request.form['lastname']
         if 'email' in request.form:
-            user['email'] = request.form['email']
+            email=request.form['email']
+            # Verificar si ya existe un usuario con el mismo documentNumber
+            existing_user_em = db['users'].find_one({'email': email})
+            if existing_user_em:
+                return {'error': 'Ya existe un usuario con el mismo correo'}, HTTPStatus.BAD_REQUEST  
+            user['email'] = email
         if 'phoneNumber' in request.form:
             user['phoneNumber'] = request.form['phoneNumber']
         updated_fields = {field: value for field, value in request.form.items() if field in schema}

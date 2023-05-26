@@ -29,17 +29,18 @@ schema = {
     'active':{'type':'boolean'},
     'avatar':{'type':'string'},
     'position':{'type':'string','required': True},
+    'parkingId':{'type':'string', 'required':True}
 }
 
 
 schema_patch = {
-            'documentType': {'type': 'string', 'allowed': ['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'], 'required': False},
-            'documentNumber': {'type': 'string', 'required': False},
-            'firstname': {'type': 'string', 'required': False},
-            'lastname': {'type': 'string', 'required': False},
-            'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
-            'phoneNumber': {'type': 'string', 'required': False},
-            'position':{'type':'string','required': False},
+    'documentType': {'type': 'string', 'allowed': ['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'], 'required': False},
+    'documentNumber': {'type': 'string', 'required': False},
+    'firstname': {'type': 'string', 'required': False},
+    'lastname': {'type': 'string', 'required': False},
+    'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
+    'phoneNumber': {'type': 'string', 'required': False},
+    'position':{'type':'string','required': False}
 }
 
 @delegates.route("/all", methods=["GET"])
@@ -77,7 +78,17 @@ def create_delegate():
         rol = claims.get('rol')
         if rol != 'admin':
             return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-
+        #validar numero de documento
+        documentNumber=request.form['documentNumber']
+        # Verificar si ya existe un delegado con el mismo documentNumber
+        existing_user = db['delegates'].find_one({'documentNumber': documentNumber})
+        if existing_user:
+            return {'error': 'Ya existe un delegado con el mismo número de documento'}, HTTPStatus.BAD_REQUEST 
+        email=request.form['email']
+        # Verificar si ya existe un delegado con el mismo email
+        existing_user_em = db['delegates'].find_one({'email': email})
+        if existing_user_em:
+            return {'error': 'Ya existe un delegado con el mismo correo'}, HTTPStatus.BAD_REQUEST        
         # Crear una instancia de delegado con los datos recibidos
         delegate = Delegate(
             documentType=request.form['documentType'],
@@ -136,6 +147,11 @@ def update_delegate(documento):
         if 'lastname' in request.form:
             delegate['lastname'] = request.form['lastname']
         if 'email' in request.form:
+            email=request.form['email']
+            # Verificar si ya existe un delegado con el mismo email
+            existing_user_em = db['delegates'].find_one({'email': email})
+            if existing_user_em:
+                return {'error': 'Ya existe un delegado con el mismo correo'}, HTTPStatus.BAD_REQUEST  
             delegate['email'] = request.form['email']
         if 'phoneNumber' in request.form:
             delegate['phoneNumber'] = request.form['phoneNumber']
@@ -143,7 +159,8 @@ def update_delegate(documento):
             delegate['password'] = request.form['password']
         if 'position' in request.form:
             delegate['position'] = request.form['position']
-        
+        if 'parkingId' in request.form :
+            delegate['parkingId'] = ObjectId(request.form['parkingId'])
         updated_fields = {field: value for field, value in request.form.items() if field in schema}
         validator = Validator(schema_patch)
         if not validator.validate(updated_fields):
