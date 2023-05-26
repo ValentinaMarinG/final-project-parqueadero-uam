@@ -77,11 +77,17 @@ public_pem = public_key.public_bytes(
 with open('public_key.pem', 'wb') as f:
     f.write(public_pem)
 
+from flask import send_file
+
 @auth.route("/public-key", methods=["GET"])
 def public_key():
+
     with open('public_key.pem', 'rb') as f:
         public_key = f.read()
         encoded_key = base64.b64encode(public_key).decode('utf-8')
-    response_data = {'public_key': encoded_key}
 
-    return jsonify(response_data), HTTPStatus.OK, {'Content-Type': 'application/octet-stream'}
+
+    # Construir la respuesta con la clave pública en formato PEM
+    # Retornar la respuesta con la clave pública en formato PEM y el encabezado apropiado
+    return public_key, HTTPStatus.OK
+
