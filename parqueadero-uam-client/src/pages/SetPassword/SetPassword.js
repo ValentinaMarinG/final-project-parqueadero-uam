@@ -7,9 +7,9 @@ import { MenuTop } from "../../components/MenuComponents/MenuTop/MenuTop";
 import { FooterPage } from "../../components/FooterPage/FooterPage";
 import "./SetPassword.scss";
 import Logo from "../../assets/png/Logo_UAM.png";
+import { Link } from "react-router-dom";
 
 const { Option } = Select;
-const url_uam ="https://www.autonoma.edu.co/uamvirtual?errorcode=4#seccion-uamvirtual";
 
 export const SetPassword = () => {
   const [form, setForm] = useState({
@@ -67,7 +67,7 @@ export const SetPassword = () => {
               </Row>
               <div className="div-button">
                 <Button className="button" danger onClick={() => window.location.replace("/")}>
-                  Cancelar
+                <Link to={"/../user/profile"}>Cancelar</Link>
                 </Button>
                 <Button
                   className="button"

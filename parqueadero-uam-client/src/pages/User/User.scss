@@ -15,7 +15,7 @@
     }
 
       .UserPage-content {
-        min-height: calc(100vh - 95px);
+        min-height: calc(100vh - 75px);
         padding: 25px 0 0 25px;
         background-color: $primary-color;
       }
@@ -37,7 +37,7 @@
       display: flex;
       font-size: xx-large;
       font-family: sans-serif;
-      color: $secondary-color;
+      color: white;
       font-weight: bold;
     
       &-subtitle {
@@ -87,17 +87,6 @@
     font-size: medium;
   }
 
-  .titulo-profie{
-    top: 20px;
-    position: fixed;
-    font-family: sans-serif;
-    font-weight: bold;
-    font-size: x-large;
-    color: $secondary-color;
-    left: 36%;
-    margin-bottom: 20px;
-  }
-
   .label-titulo-info{
     top: 60px;
     color: white;
@@ -126,6 +115,10 @@
   .table{
     width: 40vw;
     height: 20vw;
+    
+    .ant-table-cell{
+      padding: 0px;
+    }
   }
 
   .button-edit{
@@ -150,3 +143,17 @@
     flex-direction: column;
     align-items: center;
   }
+
+  .no-marker {
+    list-style-type: none;
+    border: 1px;
+    border-color: beige;
+    border-style: double;
+    padding: 5px;
+  }
+
+  .ul{
+    padding-left: 0px;
+    margin: 0px;
+  }
+
