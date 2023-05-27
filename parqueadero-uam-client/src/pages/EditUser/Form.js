@@ -42,7 +42,7 @@ const FormComponent = () => {
       setTimeout(() => {
         form.resetFields();
         navigate("/user/profile");
-      }, 2000);
+      }, 10);
     } catch (error) {
       console.log("Error de solicitud:", error);
     }
