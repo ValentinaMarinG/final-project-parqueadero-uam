@@ -36,7 +36,12 @@ const UserPage = () => {
   const [menuCollapsed, setMenuCollapsed] = useState(false);
   const { Content, Header, Footer } = Layout;
 
-  const { firstname, lastname, email, documentType, documentNumber, phoneNumber } = "hoal estrellitas"; 
+  const firstname = "jeronimo";
+  const lastname = "jeronimo";
+  const email = "jeronimo";
+  const  documentType = "jeronimo";
+  const documentNumber = "jeronimo";
+  const phoneNumber = "jeronimo";
 
   return (
     <Layout>

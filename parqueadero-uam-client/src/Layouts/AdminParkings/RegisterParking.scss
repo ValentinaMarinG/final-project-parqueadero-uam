@@ -1,0 +1,120 @@
+@import "../../scss/index.scss";
+  
+  .Layout-registerparking {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .texto-primero{
+    flex-direction: column;
+    align-items: center;
+    font-family: sans-serif;
+    color: black;
+    font-size: inherit;
+    text-align: center;
+    width: 100%;
+    margin-top: 1%;
+    &-subrayado{
+        text-decoration: underline;
+    }
+  }
+
+  .contenedor-registro-parking{
+    padding: 5px;
+    margin: 10px;
+  }
+
+  .container-box {
+    position: absolute;
+    top: 5vw;
+    left: 50vw;
+    transform: translate(-50%);
+    width: 60vw;
+    height: 50vw;
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  @media screen and (max-width: 500px) {
+    .container-box {
+      top: 40vw;
+      width: 80vw;
+      height: 90vw;
+    }
+  }
+
+  @media screen and (max-width: 300px) {
+    .container-box {
+      top: 40vw;
+      width: 90vw;
+      height: 120vw;
+    }
+  }
+
+  @media screen and (min-width: 520px)  {
+    .container-box {
+      top:40vw;
+      width: 65vw;
+      height: 45vw;
+    }
+  }
+
+  @media screen and (min-width: 550px)  {
+    .container-box {
+      top:40vw;
+      width: 60vw;
+      height: 45vw;
+    }
+  }
+
+  @media screen and (min-width: 800px)  {
+    .container-box {
+      top:10vw;
+      width: 62vw;
+      height: 45vw;
+    }
+  }
+
+  @media screen and (min-width: 900px)  {
+    .container-box {
+      top:50vw;
+      width: 62vw;
+      height: 45vw;
+    }
+  }
+
+  @media screen and (min-width: 1000px)  {
+    .container-box {
+      top:7vw;
+      width: 60vw;
+      height: 37vw;
+    }
+  }
+  @media screen and (min-width: 1200px)  {
+    .container-box {
+      top:5vw;
+      width: 60vw;
+      height: 30vw;
+    }
+  }
+
+  .container-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 4.5vw;
+    background-color: $secondary-color;
+  }
+  
+  .container-box h1 {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-top: 1vw;
+    font-size: 2vw;
+    font-family: sans-serif;
+    color: $primary-color;
+    }

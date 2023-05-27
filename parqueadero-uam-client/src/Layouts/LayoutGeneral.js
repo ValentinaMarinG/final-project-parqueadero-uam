@@ -4,10 +4,12 @@ import { MenuSider } from "../components/MenuComponents/MenuSider/MenuSider";
 import { MenuTop } from "../components/MenuComponents/MenuTop/MenuTop";
 import "./LayoutGeneral.scss";
 import { FooterPage } from "../components/FooterPage/FooterPage";
+import { BrowserRouter as Routes, Route, Outlet } from "react-router-dom";
+import { AdminDelegates } from "./AdminDelegates/AdminDelegates";
 
 export const LayoutGeneral = (props) => {
   const { children } = props;
-  const { Content, Header, Footer} = Layout;
+  const { Content, Header, Footer } = Layout;
   const [menuCollapsed, setMenuCollapsed] = useState(false);
   return (
     <Layout>
@@ -23,9 +25,9 @@ export const LayoutGeneral = (props) => {
           />
         </Header>
         <Content className="Layout-general-content">
-          
+
         </Content>
-        <Footer className='Layout-general-footer'>
+        <Footer className="Layout-general-footer">
           <FooterPage></FooterPage>
         </Footer>
       </Layout>

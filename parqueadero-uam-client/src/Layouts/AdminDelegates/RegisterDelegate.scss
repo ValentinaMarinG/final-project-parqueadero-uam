@@ -1,0 +1,121 @@
+@import "../../scss/index.scss";
+  
+  .Layout-registerdelegate {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .introduccion{
+    flex-direction: column;
+    align-items: center;
+    font-family: sans-serif;
+    color: black;
+    font-size: inherit;
+    text-align: center;
+    width: 100%;
+    margin-top: 1%;
+    &-subrayado{
+        text-decoration: underline;
+    }
+  }
+
+  .contenedor-registro{
+    padding: 5px;
+    margin: 10px;
+  }
+
+  .box {
+    position: absolute;
+    top: 5vw;
+    left: 50vw;
+    transform: translate(-50%);
+    width: 60vw;
+    height: 50vw;
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  @media screen and (max-width: 500px) {
+    .box {
+      top: 40vw;
+      width: 80vw;
+      height: 90vw;
+    }
+  }
+
+  @media screen and (max-width: 300px) {
+    .box {
+      top: 40vw;
+      width: 90vw;
+      height: 120vw;
+    }
+  }
+
+  @media screen and (min-width: 520px)  {
+    .box {
+      top:40vw;
+      width: 65vw;
+      height: 65vw;
+    }
+  }
+
+  @media screen and (min-width: 550px)  {
+    .box {
+      top:40vw;
+      width: 60vw;
+      height: 65vw;
+    }
+  }
+
+  @media screen and (min-width: 800px)  {
+    .box {
+      top:10vw;
+      width: 62vw;
+      height: 65vw;
+    }
+  }
+
+  @media screen and (min-width: 900px)  {
+    .box {
+      top:50vw;
+      width: 62vw;
+      height: 65vw;
+    }
+  }
+
+  @media screen and (min-width: 1000px)  {
+    .box {
+      top:7vw;
+      width: 60vw;
+      height: 57vw;
+    }
+  }
+  @media screen and (min-width: 1200px)  {
+    .box {
+      top:5vw;
+      width: 60vw;
+      height: 40vw;
+    }
+  }
+
+  .box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 4.5vw;
+    background-color: $secondary-color;
+  }
+  
+  .box h1 {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-top: 1vw;
+    font-size: 2vw;
+    font-family: sans-serif;
+    color: $primary-color;
+    }
+  

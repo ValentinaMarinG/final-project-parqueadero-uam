@@ -37,8 +37,8 @@ export const MenuSider = (props) => {
       icon: <CarOutlined />,
       label: <span className="navbar-text">Parqueaderos</span>,
       subMenu: [
-        { key: "/parkings/list", icon:<CarryOutOutlined />, label: "  Listar Parqueadero" },
-        { key: "/parkings/new", icon:<PlusCircleOutlined />, label: "   Nuevo Parqueadero" },
+        { key: "/admin/parkings/list", icon:<CarryOutOutlined />, label: "  Listar Parqueadero" },
+        { key: "/admin/parkings/register", icon:<PlusCircleOutlined />, label: "   Nuevo Parqueadero" },
       ],
     },
     {

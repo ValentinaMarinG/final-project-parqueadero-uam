@@ -11,11 +11,17 @@ import { Delegate } from "../pages/Delegate/Delegate";
 import UserPage, { default as User } from "../pages/User/User";
 import { EditUser } from "../pages/EditUser/EditUser";
 import { SetPassword } from "../pages/SetPassword/SetPassword";
+import { AdminDelegates } from "../Layouts/AdminDelegates/AdminDelegates";
+import { RegisterDelegate } from "../Layouts/AdminDelegates/RegisterDelegate";
+import { RegisterParking } from "../Layouts/AdminParkings/RegisterParking";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [
     {path:"/admin", component:Admin, layout:LayoutGeneral},
-    {path:"/admin/sign-in", component:SignIn, layout:LayoutGeneral}
+    {path:"/admin/sign-in", component:SignIn, layout:LayoutGeneral},
+    {path:"/admin/delegates", component:AdminDelegates, layout:AdminDelegates},
+    {path:"/admin/delegates/register", component:RegisterDelegate, layout:RegisterDelegate},
+    {path:"/admin/parkings/register", component:RegisterParking, layout:RegisterParking},
 ];
 
 const GeneralRoutes = [
@@ -31,6 +37,7 @@ const GeneralRoutes = [
     {path:"/register", component:Register, layout:Register},
     {path:"/user/edit", component:EditUser, layout:EditUser},
     {path:"/user/setpassword", component:SetPassword, layout:SetPassword},
+    {path:"/user/plate", component:User, layout:UserPage},
 ];
 
 /* ... -> Split operator: Poner todo al mismo nivel */

@@ -112,7 +112,7 @@ export const Home = () => {
             <img src={mapa} alt="mapa" />
           </Modal>
         </div>
-        <div className="texto">
+        <div className="texto-introduccion">
           <label>
             En este portal encontrará la informacion en tiempo real sobre la
             disponibilidad de los
