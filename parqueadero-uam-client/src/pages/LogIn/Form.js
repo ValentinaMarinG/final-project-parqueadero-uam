@@ -10,12 +10,23 @@ import {
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
-import forge from "node-forge";
 import "./LogIn.scss";
+import jwtDecode from "jwt-decode"
 
 const initialValues = {
   email: "",
   password: "",
+};
+
+const getRolFromToken = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    const rol = decodedToken?.rol;
+    return rol;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
 };
 
 const validationSchema = Yup.object().shape({
@@ -29,81 +40,42 @@ export const LoginForm = () => {
 
   const onSubmit = (values) => {
     axios
-      .get("http://localhost:5000/api/v1/auth/public-key")
+      .post("http://localhost:5000/api/v1/auth/login", values)
       .then((response) => {
-        const publicKeyData = response.data;
-        console.log(publicKeyData);
-        const publicKey = forge.pki.publicKeyFromPem(publicKeyData);
-
-        // Verificar si la clave pública se generó correctamente
-        if (publicKey) {
-          const passwordBuffer = forge.util.createBuffer(
-            values.password,
-            "utf8"
-          );
-          const encryptedPasswordBuffer = publicKey.encrypt(
-            passwordBuffer.getBytes(),
-            "RSAES-PKCS1-V1_5"
-          );
-
-          // Verificar si los datos cifrados están disponibles
-          if (encryptedPasswordBuffer) {
-            const encryptedPasswordBase64 = forge.util.binary.base64.encode(
-              encryptedPasswordBuffer.data
-            );
-
-            values.password = encryptedPasswordBase64;
-
-            localStorage.setItem("publicKey", publicKeyData);
-          } else {
-            console.error(
-              "Error al cifrar la contraseña. Los datos cifrados no están disponibles."
-            );
-          }
-        } else {
-          console.error("Error al obtener la clave pública.");
-        }
-
-        axios
-          .post("http://localhost:5000/api/v1/auth/login", values)
-          .then((response) => {
-            // Manejar la respuesta del servidor
-            if (response.status === 200) {
-              //setSuccessMessage(true); // Mostrar mensaje de éxito
-              const token = response.data.access_token;
-              const refresh_token = response.data.refresh_token;
-              localStorage.setItem("token", token);
-              localStorage.setItem("refresh_token", refresh_token);
-              console.log(localStorage.getItem("token"));
-              console.log(localStorage.getItem("refresh_token"));
-              setTimeout(() => {
-                //navigate("/user/profile");
-              }, 2000);
-            }
-            console.log(response.data);
-          })
-          .catch((error) => {
-            if (error.response) {
-              console.error(
-                "Error de respuesta del servidor:",
-                error.response.data
-              );
-            } else if (error.request) {
-              console.error("Error de solicitud HTTP:", error.request);
+        // Manejar la respuesta del servidor
+        if (response.status === 200) {
+          //setSuccessMessage(true); // Mostrar mensaje de éxito
+          const token = response.data.access_token;
+          const refresh_token = response.data.refresh_token;
+          localStorage.setItem("token", token);
+          localStorage.setItem("refresh_token", refresh_token);
+          console.log(localStorage.getItem("token"));
+          console.log(localStorage.getItem("refresh_token"));
+          const rol = getRolFromToken(token);
+          console.log(rol);
+          setTimeout(() => {
+            if (rol === "user") {
+              navigate("/user/profile");
+            } else if (rol === "delegate") {
+              navigate("/delegate");
             } else {
-              console.error("Error:", error.message);
+              navigate("/admin");
             }
-          });
+          }, 2000);
+        }
+        console.log(response.data);
       })
       .catch((error) => {
         if (error.response) {
-          const statusCode = error.response.status;
-          console.log(statusCode);
-          if (statusCode === 401) {
-            setErrorMessage("Contraseña incorrecta");
-          }
+          console.error(
+            "Error de respuesta del servidor:",
+            error.response.data
+          );
+        } else if (error.request) {
+          console.error("Error de solicitud HTTP:", error.request);
+        } else {
+          console.error("Error:", error.message);
         }
-        console.log(error);
       });
   };
 
