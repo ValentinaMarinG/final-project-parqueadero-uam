@@ -11,10 +11,22 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
 import "./LogIn.scss";
+import jwtDecode from "jwt-decode"
 
 const initialValues = {
   email: "",
   password: "",
+};
+
+const getRolFromToken = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    const rol = decodedToken?.rol;
+    return rol;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
 };
 
 const validationSchema = Yup.object().shape({
@@ -38,10 +50,21 @@ export const LoginForm = () => {
           const refresh_token = response.data.refresh_token;
           localStorage.setItem("token", token);
           localStorage.setItem("refresh_token", refresh_token);
+          console.log(localStorage.getItem("token"));
+          console.log(localStorage.getItem("refresh_token"));
+          const rol = getRolFromToken(token);
+          console.log(rol);
           setTimeout(() => {
-            navigate("/user/profile");
+            if (rol === "user") {
+              navigate("/user/profile");
+            } else if (rol === "delegate") {
+              navigate("/delegate");
+            } else {
+              navigate("/admin");
+            }
           }, 2000);
         }
+        console.log(response.data);
       })
       .catch((error) => {
         if (error.response) {

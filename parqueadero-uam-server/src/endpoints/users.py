@@ -8,6 +8,10 @@ import os
 from src.database import db
 from bson import ObjectId
 from cerberus import Validator
+import sendgrid
+from sendgrid.helpers.mail import Mail
+SENDGRID_API_KEY = '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'
+SENDGRID_SENDER_EMAIL = 'parqueaderouam@gmail.com'
 
 
 from src.models.user import User
@@ -309,11 +313,27 @@ def create_user_admin():
         # Guardar el usuario en la base de datos
         db['users'].insert_one(usuario_json)
 
+        enviar_correo_sendgrid(email, 'Bienvenido a parqueadero UAM', '¡Gracias por registrarte en nuestro sistema!')
+        
         return jsonify({"data": usuario_json}), HTTPStatus.CREATED
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
-
+def enviar_correo_sendgrid(destinatario, asunto, contenido):
+    message = Mail(
+        from_email=SENDGRID_SENDER_EMAIL,
+        to_emails=destinatario,
+        subject=asunto,
+        plain_text_content=contenido)
+    
+    try:
+        sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(str(e))
 
 #Actualizar usuario, permisos de admin
 @users.route('/<string:documento>', methods=['PUT','PATCH'])
@@ -388,3 +408,23 @@ def delete_user(documento):
         return jsonify({"message": "Usuario eliminado correctamente"}), HTTPStatus.OK
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
+
+
+
+#DELEGADO
+
+#Buscar usuario por su placa
+@users.route('/<string:placa>/placa', methods=['GET'])
+@jwt_required()
+def find_user(placa):
+    claims = get_jwt()
+    rol = claims.get('rol')
+    if rol != 'delegate':
+        return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+    user = db['users'].find_one({"plate": placa})
+
+    if not user:
+        return {"error": "Ningun usuario contiene esa placa"}, HTTPStatus.NOT_FOUND
+
+    return {"data": user}, HTTPStatus.OK
+
