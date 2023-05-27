@@ -139,11 +139,14 @@ def update_user():
         if not user:
             return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
         if 'firstname' in request.form:
-            user['firstname'] = request.form['firstname']
+            if request.form['firstname'] != "":
+                user['firstname'] = request.form['firstname']
         if 'lastname' in request.form:
-            user['lastname'] = request.form['lastname']
+            if request.form['lastname'] != "":
+                user['lastname'] = request.form['lastname']
         if 'phoneNumber' in request.form:
-            user['phoneNumber'] = request.form['phoneNumber']
+            if request.form['phoneNumber'] != "":
+                user['phoneNumber'] = request.form['phoneNumber']
         
         updated_fields = {field: value for field, value in request.form.items() if field in schema}
         validator = Validator(schema_patch)
@@ -226,6 +229,37 @@ def find_car():
     else:
         parqueadero = resultado['name']  # Ajusta según la estructura de tus documentos
         return jsonify({'message': f'La placa {placa_buscada} se encuentra en el parqueadero {parqueadero}.'}), 200
+
+
+
+@users.route("/change-password", methods=["POST"])
+@jwt_required()
+def change_password():
+    # Obtener el ID de usuario del token JWT
+    user_id = get_jwt_identity()
+    obj_id = ObjectId(user_id)
+
+    # Buscar al usuario en la base de datos por su ID
+    user = db['users'].find_one({"_id": obj_id})
+    if not user:
+        return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
+
+    # Obtener la contraseña actual y la nueva contraseña del cuerpo de la solicitud
+    current_password = request.json.get("current_password")
+    new_password = request.json.get("new_password")
+
+    # Verificar si la contraseña actual es correcta
+    if not User.check_password_hash(user['password'], current_password):
+        return jsonify({'error': 'Contraseña actual incorrecta'}), HTTPStatus.UNAUTHORIZED
+
+    # Generar el hash de la nueva contraseña
+    new_password_hash = User.generate_password_hash(new_password)
+
+    # Actualizar la contraseña del usuario en la base de datos
+    db['users'].update_one({"_id": obj_id}, {"$set": {"password": new_password_hash}})
+
+    return jsonify({'message': 'Contraseña actualizada correctamente'}), HTTPStatus.OK
+
 
 
 
