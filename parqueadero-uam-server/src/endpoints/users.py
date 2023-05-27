@@ -62,7 +62,7 @@ schema_patch = {
 
 
 #Listar informacion propia, permiso usuario
-@users.route('/profile', methods=['GET'])
+@users.route('/me', methods=['GET'])
 @jwt_required()
 def read_one():
     claims = get_jwt()
@@ -77,7 +77,6 @@ def read_one():
         return {"error": "Resource not found"}, HTTPStatus.NOT_FOUND
 
     return {"data": user}, HTTPStatus.OK
-
 
 
 #Crear usuario, sin autenticación
