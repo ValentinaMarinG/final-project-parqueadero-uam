@@ -55,14 +55,10 @@ export const User = () => {
     phoneNumber,
   } = userData;
 
-  console.log(userPlates)
-
   const data = userPlates.map((plate, index) => ({
     key: index.toString(),
     plate: plate,
   }));
-
-  console.log(data)
 
   const columns = [
     {
