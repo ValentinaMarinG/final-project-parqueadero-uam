@@ -10,6 +10,8 @@ import { Delegate } from "../pages/Delegate/Delegate";
 import { User } from "../pages/User/User";
 import { EditUser } from "../pages/EditUser/EditUser";
 import { SetPassword } from "../pages/SetPassword/SetPassword";
+import { RegisterUser } from "../Layouts/AdminUsers/RegisterUser";
+import { RegisterDelegate } from "../Layouts/AdminDelegates/RegisterDelegate";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [
