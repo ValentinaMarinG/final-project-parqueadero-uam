@@ -34,27 +34,6 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required("La contraseña es requerida"),
 });
 
-const onSubmit = (values) => {
-  console.log(values);
-  axios.post('http://localhost:5000/api/v1/auth/login', values)
-    .then(response => {
-      // Imprimir la respuesta exitosa
-      console.log('Respuesta exitosa:', response.data);
-    })
-    .catch(error => {
-      if (error.response) {
-        // Imprimir el mensaje de error de la respuesta del servidor
-        console.error('Error de respuesta del servidor:', error.response.data);
-      } else if (error.request) {
-        // Imprimir el mensaje de error de la solicitud HTTP
-        console.error('Error de solicitud HTTP:', error.request);
-      } else {
-        // Imprimir el mensaje de error general
-        console.error('Error:', error.message);
-      }
-    });
-};
-
 export const LoginForm = () => {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -71,10 +50,7 @@ export const LoginForm = () => {
           const refresh_token = response.data.refresh_token;
           localStorage.setItem("token", token);
           localStorage.setItem("refresh_token", refresh_token);
-          console.log(localStorage.getItem("token"));
-          console.log(localStorage.getItem("refresh_token"));
           const rol = getRolFromToken(token);
-          console.log(rol);
           setTimeout(() => {
             if (rol === "user") {
               navigate("/user/profile");
@@ -85,7 +61,6 @@ export const LoginForm = () => {
             }
           }, 2000);
         }
-        console.log(response.data);
       })
       .catch((error) => {
         if (error.response) {
