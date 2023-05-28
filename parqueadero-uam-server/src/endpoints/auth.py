@@ -25,10 +25,10 @@ def authentication_login():
             rol = 'admin'
 
     if not user or not check_password_hash(user['password'], password):
-        return {"error": "Wrong email or password"}, HTTPStatus.UNAUTHORIZED
+        return {"error": "Correo o contraseña incorrecta"}, HTTPStatus.UNAUTHORIZED
 
     if not user.get('active', False):
-        return {"error": "Account is not active"}, HTTPStatus.UNAUTHORIZED
+        return {"error": "El usuario no está activo en el sistema"}, HTTPStatus.UNAUTHORIZED
 
     access_token = create_access_token(identity=str(user["_id"]), additional_claims={'rol': rol})
     refresh_token = create_refresh_token(identity=str(user["_id"]), additional_claims={'rol': rol})
