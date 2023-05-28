@@ -1,7 +1,6 @@
 @import "../../scss/index.scss";
   
   .Layout-registerdelegate {
-    display: flex;
     flex-direction: column;
   }
 
@@ -22,6 +21,10 @@
   .contenedor-registro{
     padding: 5px;
     margin: 10px;
+    align-self: center;
+    display: grid;
+    justify-self: center;
+
   }
 
   .box {
@@ -95,7 +98,7 @@
     .box {
       top:5vw;
       width: 60vw;
-      height: 40vw;
+      height: 38vw;
     }
   }
 
@@ -119,3 +122,11 @@
     color: $primary-color;
     }
   
+    .formulario{
+      height: 380px;
+      overflow-y: auto;
+    }
+
+    .container-box{
+      margin-top: 50px;
+    }

@@ -29,7 +29,7 @@ schema = {
     'active':{'type':'boolean'},
     'avatar':{'type':'string'},
     'position':{'type':'string','required': True},
-    'parkingId':{'type':'string', 'required':True}
+    'parkingId':{'type':'string', 'required':False}
 }
 
 
@@ -101,7 +101,7 @@ def create_delegate():
             position=request.form['position'],
             active=True,
             avatar="",
-            parkingId= ObjectId(request.form['parkingId'])
+            parkingId= "",
         )
         
         delegate_json = delegate.to_json(delegate)

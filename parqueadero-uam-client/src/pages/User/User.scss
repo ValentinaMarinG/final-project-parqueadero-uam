@@ -48,7 +48,6 @@
   }
 
   .principal{
-    display: flex;
     background-color: $primary-color;
     top: 0%;
     left: 50%;
@@ -157,3 +156,17 @@
     margin: 0px;
   }
 
+  .cargando-pagina {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: center;
+    font-family: sans-serif;
+    border-radius: 5px;
+  }

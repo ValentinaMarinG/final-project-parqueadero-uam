@@ -2,7 +2,7 @@ import { Button, Layout, Table, Row, Col } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 import { LayoutGeneral } from "../LayoutGeneral";
-import "./AdminDelegates.scss";
+import "../AdminDelegates/AdminDelegates.scss";
 
 const columns = [
   {
@@ -28,37 +28,37 @@ const columns = [
     render: (text) => <a>{text}</a>,
   },
   {
-    title: "Cargo",
-    dataIndex: "cargo",
-    key: "cargo",
+    title: "Contacto",
+    dataIndex: "contacto",
+    key: "contacto",
   },
   {
-    title: "Activo",
-    dataIndex: "activo",
-    key: "activo",
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
   },
 ];
 
-export const AdminDelegates = () => {
+export const AdminUser = () => {
   return (
     <Layout className="dashboard-delegates">
       <div className="div-delegate">
         <Row gutter={[16, 16]}  style={{ marginBottom: "40px" }}>
         <div className="title">
           <label>Dashboard Parqueadero UAM</label>
-          <label className="title-subtitle">Sección de Delegados</label>
+          <label className="title-subtitle">Sección de Usuarios</label>
         </div>
         </Row>
         <Row gutter={[16, 16]} style={{ marginBottom: "40px" }}>
         <div className="div-botones">
           <Button className="botones">
-            <Link to={"../admin/delegates/register"}>Añadir Delegado</Link>
+            <Link to={"../admin/delegates/register"}><Link to={"/admin/users/register"}>Añadir Usuario</Link></Link>
           </Button>
           <Button className="botones">
-            <Link to={"../admin/delegates/"}>Eliminar Delegado</Link>
+            <Link to={"../admin/delegates/"}>Eliminar Usuario</Link>
           </Button>
           <Button className="botones">
-            <Link to={"../admin/delegates/delegates"}>Editar Delegado</Link>
+            <Link to={"../admin/delegates/delegates"}>Editar Usuario</Link>
           </Button>
         </div>
         </Row>
