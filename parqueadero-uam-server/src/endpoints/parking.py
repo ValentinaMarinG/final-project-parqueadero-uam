@@ -38,7 +38,7 @@ schema = {
         'minlength': 0,
         'maxlength': 10
     },
-    'categoryId': {'required': True}
+    'categoryId': {'required': False}
 }
 
 

@@ -10,11 +10,17 @@ import { Delegate } from "../pages/Delegate/Delegate";
 import { User } from "../pages/User/User";
 import { EditUser } from "../pages/EditUser/EditUser";
 import { SetPassword } from "../pages/SetPassword/SetPassword";
+import { RegisterUser } from "../Layouts/AdminUsers/RegisterUser";
+import { RegisterDelegate } from "../Layouts/AdminDelegates/RegisterDelegate";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [
     {path:"/admin", component:Admin, layout:LayoutGeneral},
-    {path:"/admin/sign-in", component:SignIn, layout:LayoutGeneral}
+    {path:"/admin/sign-in", component:SignIn, layout:LayoutGeneral},
+    /* {path:"/admin/delegates", component:AdminDelegates, layout:AdminDelegates}, */
+    {path:"/admin/delegates/register", component:RegisterDelegate, layout:RegisterDelegate},
+    /* {path:"/admin/parkings/register", component:RegisterParking, layout:RegisterParking}, */
+    {path:"/admin/users/register", component:RegisterUser, layout:RegisterUser},
 ];
 
 const GeneralRoutes = [

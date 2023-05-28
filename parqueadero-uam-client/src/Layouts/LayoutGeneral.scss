@@ -22,7 +22,8 @@ $widthLeftMenu: 80px;
 
     &-content{
         min-height: calc(100vh - 95px);
-        padding: 25px 0 0 25px;
+        padding: 25px 0 0 0;
+        flex-wrap: wrap;
     }
 
     &-footer{
