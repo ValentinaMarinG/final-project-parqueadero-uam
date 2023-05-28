@@ -12,7 +12,7 @@ import sendgrid
 from sendgrid.helpers.mail import Mail
 SENDGRID_API_KEY = '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'
 SENDGRID_SENDER_EMAIL = 'parqueaderouam@gmail.com'
-
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from src.models.user import User
 users = Blueprint("users",
@@ -249,11 +249,11 @@ def change_password():
     new_password = request.json.get("new_password")
 
     # Verificar si la contraseña actual es correcta
-    if not User.check_password_hash(user['password'], current_password):
+    if not check_password_hash(user['password'], current_password):
         return jsonify({'error': 'Contraseña actual incorrecta'}), HTTPStatus.UNAUTHORIZED
 
     # Generar el hash de la nueva contraseña
-    new_password_hash = User.generate_password_hash(new_password)
+    new_password_hash = generate_password_hash(new_password)
 
     # Actualizar la contraseña del usuario en la base de datos
     db['users'].update_one({"_id": obj_id}, {"$set": {"password": new_password_hash}})

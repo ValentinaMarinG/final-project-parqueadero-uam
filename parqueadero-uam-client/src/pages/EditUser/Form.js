@@ -6,11 +6,10 @@ import axios from "axios";
 import "./EditUser.scss";
 
 const initialValues = {
-    firstname: "",
-    lastname: "",
-    phoneNumber: "",
-  };
-
+  firstname: "",
+  lastname: "",
+  phoneNumber: "",
+};
 
 const FormComponent = () => {
   const [form] = Form.useForm();
@@ -33,12 +32,15 @@ const FormComponent = () => {
 
       const token = localStorage.getItem("token");
 
-      await axios.patch("http://localhost:5000/api/v1/users/", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      await axios.patch(
+        "http://localhost:5000/api/v1/users/",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setTimeout(() => {
         form.resetFields();
         navigate("/user/profile");
@@ -50,7 +52,12 @@ const FormComponent = () => {
   };
 
   return (
-    <Form form={form} onFinish={onSubmit} validationSchema={validationSchema} initialValues={initialValues}>
+    <Form
+      form={form}
+      onFinish={onSubmit}
+      validationSchema={validationSchema}
+      initialValues={initialValues}
+    >
       <div className="inputs-container">
         <Form.Item name="firstname">
           <Input placeholder="Nombre" />
