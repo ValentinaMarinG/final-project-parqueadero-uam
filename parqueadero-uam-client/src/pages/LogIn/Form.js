@@ -64,7 +64,6 @@ export const LoginForm = () => {
             }
           }, 2000);
         }
-        console.log(response.data);
       })
       .catch((error) => {
         if (error.response) {

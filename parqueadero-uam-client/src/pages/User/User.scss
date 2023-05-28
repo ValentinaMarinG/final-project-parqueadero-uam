@@ -152,3 +152,30 @@
     align-items: center;
   }
 
+  .no-marker {
+    list-style-type: none;
+    border: 1px;
+    border-color: beige;
+    border-style: double;
+    padding: 5px;
+  }
+
+  .ul{
+    padding-left: 0px;
+    margin: 0px;
+  }
+
+  .cargando-pagina {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: center;
+    font-family: sans-serif;
+    border-radius: 5px;
+  }
