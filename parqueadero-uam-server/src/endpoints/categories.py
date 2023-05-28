@@ -19,6 +19,12 @@ schema = {
     "reserved":{'type': 'boolean', 'required': True}
 }
 
+schema_patch= {
+    "services":{'type': 'string', 'required': False},
+    "accessibility":{'type': 'boolean', 'required': False},
+    "reserved":{'type': 'boolean', 'required': False}
+}
+
 
 @categories.route("/all", methods=["GET"])
 @jwt_required()
@@ -120,6 +126,11 @@ def update_category(id):
                 reserved_bool = False
             category['reserved'] = reserved_bool
         
+        updated_fields = {field: value for field, value in request.form.items() if field in schema}
+        validator = Validator(schema_patch)
+        if not validator.validate(updated_fields):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         # Actualizar el documento en la base de datos
         db['categories'].update_one({"_id": obj_id}, {"$set": category})
 

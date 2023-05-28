@@ -5,12 +5,43 @@ from werkzeug.utils import secure_filename
 import os
 from src.database import db
 from bson import ObjectId
+from cerberus import Validator
 
 from src.models.delegate import Delegate
 delegates = Blueprint("delegates",
                     __name__,
                     url_prefix="/api/v1/delegates")
 
+
+schema = {
+    'documentType':{'type': 'string', 'allowed':['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'],'required': True},
+    'documentNumber':{'type': 'string', 'required': True},
+    'firstname':{'type': 'string', 'required': True},
+    'lastname':{'type': 'string', 'required': True},
+    'email': {
+        'type': 'string',
+        'required': True,
+        'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 
+        'coerce': lambda x: x.lower()  
+    },
+    'phoneNumber':{'type': 'string', 'required': True},
+    'password':{'type': 'string', 'required': True}, 
+    'active':{'type':'boolean'},
+    'avatar':{'type':'string'},
+    'position':{'type':'string','required': True},
+    'parkingId':{'type':'string', 'required':False}
+}
+
+
+schema_patch = {
+    'documentType': {'type': 'string', 'allowed': ['Cédula de Ciudadanía', 'Cédula de Extranjería', 'Pasaporte', 'Tarjeta de identidad'], 'required': False},
+    'documentNumber': {'type': 'string', 'required': False},
+    'firstname': {'type': 'string', 'required': False},
+    'lastname': {'type': 'string', 'required': False},
+    'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
+    'phoneNumber': {'type': 'string', 'required': False},
+    'position':{'type':'string','required': False}
+}
 
 @delegates.route("/all", methods=["GET"])
 @jwt_required()
@@ -47,36 +78,17 @@ def create_delegate():
         rol = claims.get('rol')
         if rol != 'admin':
             return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        # Obtener el archivo de imagen
-        avatar = request.files.get('avatar')
-
-        # Asignar un valor predeterminado a avatar_path
-        avatar_path = None
-
-        if avatar:
-            # Obtener la ruta absoluta de la carpeta "uploads"
-            uploads_folder = os.path.abspath('uploads')
-
-            # Verificar si la carpeta "uploads" existe, de lo contrario, crearla
-            if not os.path.exists(uploads_folder):
-                os.makedirs(uploads_folder)
-
-            # Obtener la ruta absoluta de la carpeta "avatar" dentro de "uploads"
-            avatar_folder = os.path.join(uploads_folder, 'avatar')
-
-            # Verificar si la carpeta "avatar" existe, de lo contrario, crearla
-            if not os.path.exists(avatar_folder):
-                os.makedirs(avatar_folder)
-
-            # Guardar el archivo de imagen en la carpeta "avatar"
-            avatar_filename = secure_filename(avatar.filename)
-            avatar_path = os.path.join(avatar_folder, avatar_filename)
-            avatar.save(avatar_path)
-
-            # Obtener la ruta relativa del archivo incluyendo "uploads"
-            avatar_relative_path = os.path.join('uploads', os.path.relpath(avatar_path, uploads_folder))
-
-
+        #validar numero de documento
+        documentNumber=request.form['documentNumber']
+        # Verificar si ya existe un delegado con el mismo documentNumber
+        existing_user = db['delegates'].find_one({'documentNumber': documentNumber})
+        if existing_user:
+            return {'error': 'Ya existe un delegado con el mismo número de documento'}, HTTPStatus.BAD_REQUEST 
+        email=request.form['email']
+        # Verificar si ya existe un delegado con el mismo email
+        existing_user_em = db['delegates'].find_one({'email': email})
+        if existing_user_em:
+            return {'error': 'Ya existe un delegado con el mismo correo'}, HTTPStatus.BAD_REQUEST        
         # Crear una instancia de delegado con los datos recibidos
         delegate = Delegate(
             documentType=request.form['documentType'],
@@ -87,12 +99,16 @@ def create_delegate():
             phoneNumber=request.form['phoneNumber'],
             password=request.form['password'],
             position=request.form['position'],
-            active=False,
-            avatar=avatar_relative_path,
-            parkingId= ObjectId(request.form['parkingId'])
+            active=True,
+            avatar="",
+            parkingId= ""
         )
         
         delegate_json = delegate.to_json(delegate)
+        validator = Validator(schema)
+        if not validator.validate(delegate_json):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         # Guardar el    delegate en la base de datos
         db['delegates'].insert_one(delegate_json)
 
@@ -102,16 +118,15 @@ def create_delegate():
 
 
 
-@delegates.route('/<string:id>', methods=['PUT','PATCH'])
+@delegates.route('/<string:documento>', methods=['PUT','PATCH'])
 @jwt_required()
-def update_delegate(id):
+def update_delegate(documento):
     try:
         claims = get_jwt()
         rol = claims.get('rol')
         if rol != 'admin':
             return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        obj_id = ObjectId(id)
-        delegate = db['delegates'].find_one({"_id": obj_id})
+        delegate = db['delegates'].find_one({"documentNumber": documento})
 
         if not delegate:
             return jsonify({'error': 'Delegado no encontrado'}), HTTPStatus.NOT_FOUND
@@ -120,12 +135,23 @@ def update_delegate(id):
         if 'documentType' in request.form:
             delegate['documentType'] = request.form['documentType']
         if 'documentNumber' in request.form:
-            delegate['documentNumber'] = request.form['documentNumber']
+            #validar numero de documento
+            documentNumber=request.form['documentNumber']
+            # Verificar si ya existe un usuario con el mismo documentNumber
+            existing_delegate = db['delegates'].find_one({'documentNumber': documentNumber})
+            if existing_delegate:
+                return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST  
+            delegate['documentNumber'] = documentNumber
         if 'firstname' in request.form:
             delegate['firstname'] = request.form['firstname']
         if 'lastname' in request.form:
             delegate['lastname'] = request.form['lastname']
         if 'email' in request.form:
+            email=request.form['email']
+            # Verificar si ya existe un delegado con el mismo email
+            existing_user_em = db['delegates'].find_one({'email': email})
+            if existing_user_em:
+                return {'error': 'Ya existe un delegado con el mismo correo'}, HTTPStatus.BAD_REQUEST  
             delegate['email'] = request.form['email']
         if 'phoneNumber' in request.form:
             delegate['phoneNumber'] = request.form['phoneNumber']
@@ -133,15 +159,16 @@ def update_delegate(id):
             delegate['password'] = request.form['password']
         if 'position' in request.form:
             delegate['position'] = request.form['position']
-        if 'avatar' in request.files:
-            avatar = request.files['avatar']
-            if avatar:
-                # Guardar el archivo de imagen en una ubicación deseada
-                avatar.save('../uploads/avatar' + avatar.filename)
-                delegate['avatar'] = avatar.filename
+        if 'parkingId' in request.form :
+            delegate['parkingId'] = ObjectId(request.form['parkingId'])
+        updated_fields = {field: value for field, value in request.form.items() if field in schema}
+        validator = Validator(schema_patch)
+        if not validator.validate(updated_fields):
+            errors = validator.errors
+            return {'error': errors}, HTTPStatus.BAD_REQUEST
         
         # Actualizar el documento en la base de datos
-        db['delegates'].update_one({"_id": obj_id}, {"$set": delegate})
+        db['delegates'].update_one({"documentNumber": documento}, {"$set": delegate})
 
         return jsonify({"data": delegate}), HTTPStatus.OK
         
@@ -150,22 +177,21 @@ def update_delegate(id):
 
 
 
-@delegates.route('/<string:id>', methods=['DELETE'])
+@delegates.route('/<string:documento>', methods=['DELETE'])
 @jwt_required()
-def delete_delegate(id):
+def delete_delegate(documento):
     try:
         claims = get_jwt()
         rol = claims.get('rol')
         if rol != 'admin':
             return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-        obj_id = ObjectId(id)
-        delegate = db['delegates'].find_one({"_id": obj_id})
+        delegate = db['delegates'].find_one({"documentNumber": documento})
 
         if not delegate:
             return jsonify({'error': 'Delegado no encontrado'}), HTTPStatus.NOT_FOUND
 
         # Eliminar el Delegado de la base de datos
-        db['delegates'].delete_one({"_id": obj_id})
+        db['delegates'].delete_one({"documentNumber": documento})
         
         return jsonify({"message": "Delegado eliminado correctamente"}), HTTPStatus.OK
     except Exception as e:

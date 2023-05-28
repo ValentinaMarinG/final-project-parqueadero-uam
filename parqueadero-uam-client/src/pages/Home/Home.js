@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Logo from "../../assets/png/logo.png";
 import { Button, Layout } from "antd";
 import "./Home.scss";
@@ -13,14 +12,66 @@ import { Card } from "antd";
 import { FooterPage } from "../../components/FooterPage/FooterPage";
 import Modal from "antd/es/modal/Modal";
 import mapa from "../../assets/png/mapa.png";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 
 const { Meta } = Card;
 
-const Automoviles = 30;
-const Motocicletas = 25;
-const Discapacitados = 3
-
 export const Home = () => {
+
+  const [parkingData, setParkingData] = useState([]);
+
+  useEffect(() => {
+    const fetchParkingData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/v1/parking/home");
+        if (response.status === 200) {
+          setParkingData(response.data);
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error("Error de respuesta del servidor:", error.response.data);
+        } else if (error.request) {
+          console.error("Error de solicitud HTTP:", error.request);
+        } else {
+          console.error("Error:", error.message);
+        }
+      }
+    };
+
+    fetchParkingData();
+  }, []);
+
+  let availableCupula = 0;
+  let numberOfCarsCupula = 0;
+  let occupiedCupula = 0;
+
+  let availableVagon = 0;
+  let numberOfCarsVagon = 0;
+  let occupiedVagon = 0;
+
+  let availablePrincipal = 0;
+  let numberOfCarsPrincipal = 0;
+  let occupiedPrincipal = 0;
+
+  const processParkingData = (parkings) => {
+    parkings.forEach((parking) => {
+      if (parking.name == 'Cúpula') {
+        availableCupula = parking.available;
+        numberOfCarsCupula = parking.numberofCars;
+        occupiedCupula = parking.occupied;
+      } else if (parking.name == 'Vagon') {
+        availableVagon = parking.available;
+        numberOfCarsVagon = parking.numberofCars;
+        occupiedVagon = parking.occupied;
+      } else if (parking.name == "Principal") {
+        availablePrincipal = parking.available;
+        numberOfCarsPrincipal = parking.numberofCars;
+        occupiedPrincipal = parking.occupied;
+      }
+    });
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -34,6 +85,7 @@ export const Home = () => {
 
   return (
     <Layout className="Layout-home">
+      {processParkingData(parkingData)}
       <Header className="Layout-home-header">
         <img className="Layout-home-header-left-logo" src={Logo} alt="Logo" />
         <Button className="button__right" type="link">
@@ -50,51 +102,94 @@ export const Home = () => {
         </div>
         <Carousel autoplay className="Layout-home-content-carousel">
           <div>
-              <Card
-                className="Layout-home-content-carousel-carousel-cupula"
-                hoverable
-                cover={<img alt="Parqueadero Cupula" src={cupula} />}
-              >
-                <div className="overlay-container">
-                  <h3 className="overlay-title">Parqueaderos disponibles</h3>
-                  <p className="overlay-description">Automóviles:<div className="overlay-description-number">{Automoviles}</div></p>
-                  <p className="overlay-description">Motocicletas:<div className="overlay-description-number">{Motocicletas}</div></p>
-                  <p className="overlay-description">Discapacitados:<div className="overlay-description-number">{Discapacitados}</div></p>
-                </div>
-                <Meta className="meta-titulo" title="Parqueadero de la Cúpula" />
-              </Card>
+            <Card
+              className="Layout-home-content-carousel-carousel-cupula"
+              hoverable
+              cover={<img alt="Parqueadero Cupula" src={cupula} />}
+            >
+              <div className="overlay-container">
+                <h3 className="overlay-title">Parqueaderos disponibles</h3>
+                <p className="overlay-description">
+                  Capacidad:
+                  <div className="overlay-description-number">
+                    {availableCupula}
+                  </div>
+                </p>
+                <p className="overlay-description">
+                  Ocupados:
+                  <div className="overlay-description-number">
+                    {occupiedCupula}
+                  </div>
+                </p>
+                <p className="overlay-description">
+                  Disponibles:
+                  <div className="overlay-description-number">
+                    {numberOfCarsCupula}
+                  </div>
+                </p>
+              </div>
+              <Meta className="meta-titulo" title="Parqueadero de la Cúpula" />
+            </Card>
           </div>
           <div>
-              <Card
-                className="Layout-home-content-carousel-carousel-cupula"
-                hoverable
-                cover={<img alt="Parqueadero Gratis" src={gratis} />}
-              >
-                <div className="overlay-container">
-                  <h3 className="overlay-title">Parqueaderos disponibles</h3>
-                  <p className="overlay-description">Automóviles:<div className="overlay-description-number">25</div></p>
-                  <p className="overlay-description">Motocicletas:<div className="overlay-description-number">30</div></p>
-                  <p className="overlay-description">Discapacitados:<div className="overlay-description-number">3</div></p>
-                </div>
-                <Meta className="meta-titulo" title="Parqueadero de Economía" />
-              </Card>
+            <Card
+              className="Layout-home-content-carousel-carousel-cupula"
+              hoverable
+              cover={<img alt="Parqueadero Principal" src={gratis} />}
+            >
+              <div className="overlay-container">
+                <h3 className="overlay-title">Parqueaderos disponibles</h3>
+                <p className="overlay-description">
+                  Capacidad:
+                  <div className="overlay-description-number">
+                    {availablePrincipal}
+                  </div>
+                </p>
+                <p className="overlay-description">
+                  Ocupados:
+                  <div className="overlay-description-number">
+                    {occupiedPrincipal}
+                  </div>
+                </p>
+                <p className="overlay-description">
+                  Disponibles:
+                  <div className="overlay-description-number">
+                    {numberOfCarsPrincipal}
+                  </div>
+                </p>
+              </div>
+              <Meta className="meta-titulo" title="Parqueadero de Principal" />
+            </Card>
           </div>
           <div>
-            <Button type="link">
-              <Card
-                className="Layout-home-content-carousel-carousel-cupula"
-                hoverable
-                cover={<img alt="Parqueadero Vagones" src={vagon} />}
-              >
-                <div className="overlay-container">
-                  <h3 className="overlay-title">Parqueaderos disponibles</h3>
-                  <p className="overlay-description">Automóviles:<div className="overlay-description-number">25</div></p>
-                  <p className="overlay-description">Motocicletas:<div className="overlay-description-number">30</div></p>
-                  <p className="overlay-description">Discapacitados:<div className="overlay-description-number">3</div></p>
-                </div>
-                <Meta className="meta-titulo" title="Parqueadero Vagones" />
-              </Card>
-            </Button>
+            <Card
+              className="Layout-home-content-carousel-carousel-cupula"
+              hoverable
+              cover={<img alt="Parqueadero Vagon" src={vagon} />}
+            >
+              <div className="overlay-container">
+                <h3 className="overlay-title">Parqueaderos disponibles</h3>
+                <p className="overlay-description">
+                  Capacidad:
+                  <div className="overlay-description-number">
+                    {availableVagon}
+                  </div>
+                </p>
+                <p className="overlay-description">
+                  Ocupados:
+                  <div className="overlay-description-number">
+                    {occupiedVagon}
+                  </div>
+                </p>
+                <p className="overlay-description">
+                  Disponibles:
+                  <div className="overlay-description-number">
+                    {numberOfCarsVagon}
+                  </div>
+                </p>
+              </div>
+              <Meta className="meta-titulo" title="Parqueadero Vagón" />
+            </Card>
           </div>
         </Carousel>
         <div className="div">
@@ -112,7 +207,7 @@ export const Home = () => {
             <img src={mapa} alt="mapa" />
           </Modal>
         </div>
-        <div className="texto">
+        <div className="texto-introduccion">
           <label>
             En este portal encontrará la informacion en tiempo real sobre la
             disponibilidad de los
