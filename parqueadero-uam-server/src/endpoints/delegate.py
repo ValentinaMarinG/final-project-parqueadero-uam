@@ -101,7 +101,7 @@ def create_delegate():
             position=request.form['position'],
             active=True,
             avatar="",
-            parkingId= "",
+            parkingId= ""
         )
         
         delegate_json = delegate.to_json(delegate)

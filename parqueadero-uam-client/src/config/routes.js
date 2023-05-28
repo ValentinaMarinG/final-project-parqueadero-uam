@@ -7,13 +7,9 @@ import { LogIn } from "../pages/LogIn/LogIn";
 import { NotFound } from "../pages/NotFound/NotFound";
 import { Register } from "../pages/Register/Register";
 import { Delegate } from "../pages/Delegate/Delegate";
-import { SetPassword } from "../pages/SetPassword/SetPassword";
-import { AdminDelegates } from "../Layouts/AdminDelegates/AdminDelegates";
-import { RegisterDelegate } from "../Layouts/AdminDelegates/RegisterDelegate";
-import { RegisterParking } from "../Layouts/AdminParkings/RegisterParking";
 import { User } from "../pages/User/User";
 import { EditUser } from "../pages/EditUser/EditUser";
-import { RegisterUser } from "../Layouts/AdminUsers/RegisterUser";
+import { SetPassword } from "../pages/SetPassword/SetPassword";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [

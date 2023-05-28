@@ -1,24 +1,22 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button, Input } from "antd";
+import { useState } from "react";
 import {
   UserOutlined,
   EyeTwoTone,
   EyeInvisibleOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
+import "./LogIn.scss";
 import jwtDecode from "jwt-decode"
 
 const initialValues = {
   email: "",
   password: "",
 };
-
-const validationSchema = Yup.object().shape({
-  email: Yup.string().required("El correo institucional es requerido"),
-  password: Yup.string().required("La contraseña es requerida"),
-});
 
 const getRolFromToken = (token) => {
   try {
@@ -31,46 +29,55 @@ const getRolFromToken = (token) => {
   }
 };
 
-const onSubmit = (values) => {
-  console.log(values);
-  axios
-    .post("http://localhost:5000/api/v1/auth/login", values)
-    .then((response) => {
-      // Manejar la respuesta del servidor
-      if (response.status === 200) {
-        //setSuccessMessage(true); // Mostrar mensaje de éxito
-        const token = response.data.access_token;
-        const refresh_token = response.data.refresh_token;
-        localStorage.setItem("token", token);
-        localStorage.setItem("refresh_token", refresh_token);
-        console.log(localStorage.getItem("token"));
-        console.log(localStorage.getItem("refresh_token"));
-        const rol = getRolFromToken(token);
-        console.log(rol);
-        setTimeout(() => {
-          if (rol === "user"){
-            //navigate("/user/profile");
-          } else if (rol === "delegate"){
-            //navigate("/delegate");
-          } else{
-            //navigate("/admin")
-          }
-        }, 2000);
-      }
-      console.log(response.data);
-    })
-    .catch((error) => {
-      if (error.response) {
-        console.error("Error de respuesta del servidor:", error.response.data);
-      } else if (error.request) {
-        console.error("Error de solicitud HTTP:", error.request);
-      } else {
-        console.error("Error:", error.message);
-      }
-    });
-};
+const validationSchema = Yup.object().shape({
+  email: Yup.string().required("El correo es requerido"),
+  password: Yup.string().required("La contraseña es requerida"),
+});
 
 export const LoginForm = () => {
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+
+  const onSubmit = (values) => {
+    axios
+      .post("http://localhost:5000/api/v1/auth/login", values)
+      .then((response) => {
+        // Manejar la respuesta del servidor
+        if (response.status === 200) {
+          //setSuccessMessage(true); // Mostrar mensaje de éxito
+          const token = response.data.access_token;
+          const refresh_token = response.data.refresh_token;
+          localStorage.setItem("token", token);
+          localStorage.setItem("refresh_token", refresh_token);
+          const rol = getRolFromToken(token);
+          setTimeout(() => {
+            if (rol === "user") {
+              navigate("/user/profile");
+            } else if (rol === "delegate") {
+              navigate("/delegate");
+            } else {
+              navigate("/admin");
+            }
+          }, 2000);
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error(
+            "Error de respuesta del servidor:",
+            error.response.data
+          );
+          setShowErrorMessage(true);
+          setErrorMessage("Usuario o contraseña incorrecta");
+        } else if (error.request) {
+          console.error("Error de solicitud HTTP:", error.request);
+        } else {
+          console.error("Error:", error.message);
+        }
+      });
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -106,6 +113,9 @@ export const LoginForm = () => {
               visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
             }
           />
+          {showErrorMessage && (
+            <div className="error-message-password">{errorMessage}</div>
+          )}
           <ErrorMessage
             name="password"
             component="div"

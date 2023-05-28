@@ -8,6 +8,12 @@ import os
 from src.database import db
 from bson import ObjectId
 from cerberus import Validator
+import sendgrid
+from venv.constants import SENDGRID_API_KEY, SENDGRID_SENDER_EMAIL
+from sendgrid.helpers.mail import Mail
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
 
 
 from src.models.user import User
@@ -62,7 +68,7 @@ schema_patch = {
 
 
 #Listar informacion propia, permiso usuario
-@users.route('/profile', methods=['GET'])
+@users.route('/me', methods=['GET'])
 @jwt_required()
 def read_one():
     claims = get_jwt()
@@ -77,7 +83,6 @@ def read_one():
         return {"error": "Resource not found"}, HTTPStatus.NOT_FOUND
 
     return {"data": user}, HTTPStatus.OK
-
 
 
 #Crear usuario, sin autenticación
@@ -124,6 +129,55 @@ def create_user():
 
 
 
+
+@users.route('/avatar', methods=['PUT'])
+@jwt_required()
+def update_avatar():
+    try:
+        user_id = get_jwt_identity()
+        obj_id = ObjectId(user_id)
+        user = db['users'].find_one({"_id": obj_id})
+
+        if not user:
+            return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
+        
+        # Obtener el archivo de imagen
+        avatar = request.files.get('avatar')
+
+        # Asignar un valor predeterminado a avatar_path
+        avatar_path = None
+
+        if avatar:
+            # Obtener la ruta absoluta de la carpeta "uploads"
+            uploads_folder = os.path.abspath('uploads')
+
+            # Verificar si la carpeta "uploads" existe, de lo contrario, crearla
+            if not os.path.exists(uploads_folder):
+                os.makedirs(uploads_folder)
+
+            # Obtener la ruta absoluta de la carpeta "avatar" dentro de "uploads"
+            avatar_folder = os.path.join(uploads_folder, 'avatar')
+
+            # Verificar si la carpeta "avatar" existe, de lo contrario, crearla
+            if not os.path.exists(avatar_folder):
+                os.makedirs(avatar_folder)
+
+            # Guardar el archivo de imagen en la carpeta "avatar"
+            avatar_filename = secure_filename(avatar.filename)
+            avatar_path = os.path.join(avatar_folder, avatar_filename)
+            avatar.save(avatar_path)
+
+            # Obtener la ruta relativa del archivo incluyendo "uploads"
+            avatar_relative_path = os.path.join('uploads', os.path.relpath(avatar_path, uploads_folder))
+            user['avatar'] = avatar_relative_path
+            db['users'].update_one({"_id": obj_id}, {"$set": user})
+
+        return jsonify({'message': 'Foto de perfil actualizada correctamente'}), HTTPStatus.OK
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
+
+
 #Editar informacion propia, permiso de usuario
 @users.route('/', methods=['PUT','PATCH'])
 @jwt_required()
@@ -136,11 +190,14 @@ def update_user():
         if not user:
             return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
         if 'firstname' in request.form:
-            user['firstname'] = request.form['firstname']
+            if request.form['firstname'] != "":
+                user['firstname'] = request.form['firstname']
         if 'lastname' in request.form:
-            user['lastname'] = request.form['lastname']
+            if request.form['lastname'] != "":
+                user['lastname'] = request.form['lastname']
         if 'phoneNumber' in request.form:
-            user['phoneNumber'] = request.form['phoneNumber']
+            if request.form['phoneNumber'] != "":
+                user['phoneNumber'] = request.form['phoneNumber']
         
         updated_fields = {field: value for field, value in request.form.items() if field in schema}
         validator = Validator(schema_patch)
@@ -223,6 +280,37 @@ def find_car():
     else:
         parqueadero = resultado['name']  # Ajusta según la estructura de tus documentos
         return jsonify({'message': f'La placa {placa_buscada} se encuentra en el parqueadero {parqueadero}.'}), 200
+
+
+
+@users.route("/change-password", methods=["POST"])
+@jwt_required()
+def change_password():
+    # Obtener el ID de usuario del token JWT
+    user_id = get_jwt_identity()
+    obj_id = ObjectId(user_id)
+
+    # Buscar al usuario en la base de datos por su ID
+    user = db['users'].find_one({"_id": obj_id})
+    if not user:
+        return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
+
+    # Obtener la contraseña actual y la nueva contraseña del cuerpo de la solicitud
+    current_password = request.json.get("current_password")
+    new_password = request.json.get("new_password")
+
+    # Verificar si la contraseña actual es correcta
+    if not check_password_hash(user['password'], current_password):
+        return jsonify({'error': 'Contraseña actual incorrecta'}), HTTPStatus.UNAUTHORIZED
+
+    # Generar el hash de la nueva contraseña
+    new_password_hash = generate_password_hash(new_password)
+
+    # Actualizar la contraseña del usuario en la base de datos
+    db['users'].update_one({"_id": obj_id}, {"$set": {"password": new_password_hash}})
+
+    return jsonify({'message': 'Contraseña actualizada correctamente'}), HTTPStatus.OK
+
 
 
 
@@ -310,11 +398,27 @@ def create_user_admin():
         # Guardar el usuario en la base de datos
         db['users'].insert_one(usuario_json)
 
+        enviar_correo_sendgrid(email, 'Bienvenido a parqueadero UAM', '¡Gracias por registrarte en nuestro sistema!')
+        
         return jsonify({"data": usuario_json}), HTTPStatus.CREATED
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
-
+def enviar_correo_sendgrid(destinatario, asunto, contenido):
+    message = Mail(
+        from_email=SENDGRID_SENDER_EMAIL,
+        to_emails=destinatario,
+        subject=asunto,
+        plain_text_content=contenido)
+    
+    try:
+        sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(str(e))
 
 #Actualizar usuario, permisos de admin
 @users.route('/<string:documento>', methods=['PUT','PATCH'])
@@ -389,3 +493,23 @@ def delete_user(documento):
         return jsonify({"message": "Usuario eliminado correctamente"}), HTTPStatus.OK
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
+
+
+
+#DELEGADO
+
+#Buscar usuario por su placa
+@users.route('/<string:placa>/placa', methods=['GET'])
+@jwt_required()
+def find_user(placa):
+    claims = get_jwt()
+    rol = claims.get('rol')
+    if rol != 'delegate':
+        return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+    user = db['users'].find_one({"plate": placa})
+
+    if not user:
+        return {"error": "Ningun usuario contiene esa placa"}, HTTPStatus.NOT_FOUND
+
+    return {"data": user}, HTTPStatus.OK
+

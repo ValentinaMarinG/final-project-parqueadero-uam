@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Avatar, Col, Row, Table, Button, Spin, Input } from "antd";
+import { Layout, Avatar, Col, Row, Table, Button, Spin } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import cupula from "../../assets/jpg/sobre_uam.jpg";
 import { UserMenuSider } from "../../components/MenuComponents/UserMenuSider/UserMenuSider";
@@ -81,14 +81,10 @@ export const User = () => {
     phoneNumber,
   } = userData;
 
-  console.log(userPlates);
-
   const data = userPlates.map((plate, index) => ({
     key: index.toString(),
     plate: plate,
   }));
-
-  console.log(data);
 
   const columns = [
     {
@@ -142,12 +138,12 @@ export const User = () => {
                     icon={<UserOutlined />}
                   />
                 )}
-                <Input
+                <input
                   type="file"
                   accept="image/*"
                   onChange={handleAvatarChange}
                 />
-                <Button onClick={handleUploadAvatar}>Subir Avatar</Button>
+                <button onClick={handleUploadAvatar}>Subir Avatar</button>
               </Col>
               <Col>
                 <div className="conatiner-info">

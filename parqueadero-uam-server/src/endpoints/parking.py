@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt,get_jwt_identity
+from flask_jwt_extended import jwt_required,get_jwt_identity , get_jwt
 from http import HTTPStatus
 from src.database import db
 from bson import ObjectId
 from bson.errors import InvalidId
 from cerberus import Validator
+from functools import wraps
 
 from src.models.parking import Parking
 parking = Blueprint("parking",
@@ -12,6 +13,35 @@ parking = Blueprint("parking",
                     url_prefix="/api/v1/parking")
 
     
+schema = {
+    'name':{'type': 'string', 'required': True},
+    'type':{'type': 'string', 'required': True},
+    'numberofCars':{'type': 'integer', 'required': True},
+    'payable':{'type': 'boolean', 'required': True}, 
+    'price':{'type':'float', 'required':True},
+    'plate': {
+        'type': 'list',
+        'required':False,
+        'schema': {
+            'type': 'string',
+            'min': 0,
+            'max': 100
+        },
+        'minlength': 0,
+        'maxlength': 10
+    },
+    'payments': {
+        'type': 'list',
+        'required': False,
+        'schema': {
+            'type': 'boolean'
+        },
+        'minlength': 0,
+        'maxlength': 10
+    },
+    'categoryId': {'required': True}
+}
+
 schema = {
     'name':{'type': 'string', 'required': True},
     'type':{'type': 'string', 'required': True},
@@ -70,6 +100,26 @@ schema_patch= {
     },
     'categoryId': {'required': False}
 }
+
+#Informacion de home 
+@parking.route("/home", methods=['get'])
+def info_home():
+    parkings = db['parking'].find()  
+    resultado = []
+    for parking in parkings:
+        name = parking['name']
+        occupied = len(parking['plate'])
+        number_of_cars = parking['numberofCars'] - occupied
+        available = number_of_cars
+
+        resultado.append({
+            'name': name,
+            'numberofCars': number_of_cars,
+            'occupied': occupied,
+            'available': available
+        })
+
+    return jsonify(resultado)
 
 
 
@@ -333,3 +383,22 @@ def remove_plate_from_parking():
     return jsonify({'message': 'Placa eliminada correctamente'})
 
 
+#Pago
+@parking.route('/<string:nombre>/pago/<string:placa>', methods=['POST'])
+@jwt_required()
+def update_payment(nombre,placa):
+    # Verificar si el usuario tiene rol de delegado
+    jwt_data = get_jwt()
+    rol = jwt_data.get('rol')
+    if rol != 'delegate':
+        return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+    parking = db['parking'].find_one({'name': nombre})
+    if not parking:
+        return {"error": "Parqueadero no encontrado"}, HTTPStatus.NOT_FOUND
+    if placa in parking['plate']:
+        index = parking['plate'].index(placa)
+        parking['payments'][index-1] = True
+        db['parking'].update_one({'name': nombre}, {'$set': {'payments': parking['payments']}})
+        return jsonify({'message': f' Estado de pago actualizado para la placa {placa}.'}), HTTPStatus.OK
+    else:
+        return jsonify({'message': 'Placa no encontrada.'}), HTTPStatus.NOT_FOUND
