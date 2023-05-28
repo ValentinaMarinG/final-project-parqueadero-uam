@@ -9,10 +9,10 @@ from src.database import db
 from bson import ObjectId
 from cerberus import Validator
 import sendgrid
+from venv.constants import SENDGRID_API_KEY, SENDGRID_SENDER_EMAIL
 from sendgrid.helpers.mail import Mail
-SENDGRID_API_KEY = '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'
-SENDGRID_SENDER_EMAIL = 'parqueaderouam@gmail.com'
-from werkzeug.security import check_password_hash, generate_password_hash
+
+
 
 from src.models.user import User
 users = Blueprint("users",
