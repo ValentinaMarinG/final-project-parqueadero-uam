@@ -380,11 +380,11 @@ export const RegisterForm = () => {
               </Col>
             </Row>
             <div className="button-container">
-              <Button danger onClick={() => window.location.replace("/admin")}>
+              <Button danger onClick={() => window.location.replace("/admin/users")}>
                 Cancelar
               </Button>
-              <Button type="primary" htmlType="submit">
-                Regístrate
+              <Button type="primary" htmlType="submit" danger onClick={() => window.location.replace("/admin/users")}>
+                Regístrar
               </Button>
             </div>
           </Form>
