@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -81,10 +82,10 @@ const onSubmit = (values) => {
     });
 };
 
-export const RegisterForm = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const document = queryParams.get("documentNumber");
+export const AdminEditUserForm = () => {
+  const { document } = useParams();
+  console.log(document);
+
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
   const [departamentos, setDepartamentos] = useState([]);
   const [municipios, setMunicipios] = useState([]);

@@ -27,43 +27,79 @@ const columns = [
   },
   {
     title: "Documento",
-    dataIndex: "document",
-    key: "document",
-    render: (text) => <a>{text}</a>,
+    dataIndex: "documentNumber",
+    key: "documentNumber",
   },
   {
     title: "Contacto",
-    dataIndex: "contacto",
-    key: "contacto",
+    dataIndex: "phoneNumber",
+    key: "phoneNumber",
   },
   {
     title: "Email",
     dataIndex: "email",
     key: "email",
   },
+  {
+    title: "Departamento",
+    dataIndex: "department",
+    key: "department",
+  },
+  {
+    title: "Municipio",
+    dataIndex: "municipality",
+    key: "municipality",
+  },
 ];
 
 export const AdminUser = () => {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
-  const [documentNumber, setDocumentNumber] = useState("");
-
-  const handleSave = () => {
-    navigate(`/users/edit?documentNumber=${documentNumber}`);
-    setVisible(false);
-  };
-
-  const handleCancel = () => {
-    setVisible(false);
-  };
-
-  const [userData, setUserData] = useState(null);
-  const token = localStorage.getItem("token");
+  const [visible2, setVisible2] = useState(false);
+  const [document, setDocumentNumber] = useState("");
 
   const handleOpenModal = (documento) => {
     console.log("modal");
     setVisible(true);
     setDocumentNumber(documento);
+  };
+
+  const handleSave = () => {
+    navigate(`admin/users/${document}`);
+    setVisible(false);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+    navigate("/admin/users");
+  };
+
+  const [userData, setUserData] = useState(null);
+  const token = localStorage.getItem("token");
+
+  const handleOpenModal2 = (documento) => {
+    console.log("modal");
+    setVisible2(true);
+    setDocumentNumber(documento);
+  };
+
+  const handleSave2 = () => {
+    deleteUser(document);
+    setVisible2(false);
+  };
+
+  const handleCancel2 = () => {
+    setVisible2(false);
+    navigate("/admin/users");
+  };
+
+  const deleteUser = async (documento) => {
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/v1/users/${documento}`);
+      console.log("Usuario eliminado:", response.data);
+    } catch (error) {
+      console.error("Error al eliminar el usuario:", error);
+    }
   };
 
   useEffect(() => {
@@ -105,9 +141,43 @@ export const AdminUser = () => {
             <Button className="botones" onClick={handleOpenModal}>
               Editar Usuario
             </Button>
-            <Button className="botones">
-              <Link to={"../admin/delegates/"}>Eliminar Usuario</Link>
+            <Modal
+              open={visible}
+              className="modal"
+              title="Ingresar número de documento"
+              onCancel={handleCancel}
+              onOk={handleSave}
+            >
+              <Form layout="vertical">
+                <Form.Item label="Número de documento del usuario a editar">
+                  <Input
+                    placeholder="Número de documento"
+                    value={document}
+                    onChange={(e) => setDocumentNumber(e.target.value)}
+                  />
+                </Form.Item>
+              </Form>
+            </Modal>
+            <Button className="botones" onClick={handleOpenModal2}>
+              Eliminar Usuario
             </Button>
+            <Modal
+              open={visible2}
+              className="modal"
+              title="Ingresar número de documento"
+              onCancel={handleCancel2}
+              onOk={handleSave2}
+            >
+              <Form layout="vertical">
+                <Form.Item label="Número de documento del usuario a eliminiar">
+                  <Input
+                    placeholder="Número de documento"
+                    value={document}
+                    onChange={(e) => setDocumentNumber(e.target.value)}
+                  />
+                </Form.Item>
+              </Form>
+            </Modal>
           </div>
         </Row>
         <Row gutter={[10, 10]} style={{ marginBottom: "10px" }}>
@@ -118,27 +188,6 @@ export const AdminUser = () => {
             pagination={{ defaultPageSize: 5 }}
           />
         </Row>
-        <Modal
-          title="Modal de Administrador de Usuario"
-          onCancel={handleCancel}
-          footer={[
-            <Button key="cancel" onClick={handleCancel}>
-              Cancelar
-            </Button>,
-            <Button key="save" type="primary" onClick={handleSave}>
-              Aceptar
-            </Button>,
-          ]}
-        >
-          <Form layout="vertical">
-            <Form.Item label="Número de documento">
-              <Input
-                value={documentNumber}
-                onChange={(e) => setDocumentNumber(e.target.value)}
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
       </div>
     </Layout>
   );

@@ -13,6 +13,7 @@ import { SetPassword } from "../pages/SetPassword/SetPassword";
 import { RegisterUser } from "../Layouts/AdminUsers/RegisterUser";
 import { RegisterDelegate } from "../Layouts/AdminDelegates/RegisterDelegate";
 import { AdminEditUser } from "../Layouts/AdminUsers/AdminEditUser/AdminEditUser";
+import { AdminEditUserForm } from "../Layouts/AdminUsers/AdminEditUser/Form";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [
@@ -22,7 +23,7 @@ const AdminRoutes = [
     {path:"/admin/delegates/register", component:RegisterDelegate, layout:RegisterDelegate},
     /* {path:"/admin/parkings/register", component:RegisterParking, layout:RegisterParking}, */
     {path:"/admin/users/register", component:RegisterUser, layout:RegisterUser},
-    {path:"/admin/users/edit", component:AdminEditUser, layout:AdminEditUser},
+    {path:"/admin/users/:document", component:AdminEditUserForm, layout:AdminEditUser},
 ];
 
 const GeneralRoutes = [

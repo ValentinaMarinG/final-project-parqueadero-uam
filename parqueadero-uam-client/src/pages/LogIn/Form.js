@@ -63,7 +63,6 @@ export const LoginForm = () => {
           localStorage.setItem("refresh_token", refresh_token);
           const rol = getRolFromToken(token);
           const activo = getActiveFromToken(token);
-          if (activo) {
             setTimeout(() => {
               if (rol === "user") {
                 navigate("/user/profile");
@@ -73,15 +72,7 @@ export const LoginForm = () => {
                 navigate("/admin");
               }
             }, 2000);
-          } else {
-            <Alert
-              message="Error"
-              description="El usuario No esta activo en el sistema"
-              type="error"
-              showIcon
-            />;
           }
-        }
       })
       .catch((error) => {
         if (error.response) {
@@ -90,7 +81,7 @@ export const LoginForm = () => {
             error.response.data
           );
           setShowErrorMessage(true);
-          setErrorMessage("Usuario o contraseña incorrecta");
+          setErrorMessage(error.response.message);
         } else if (error.request) {
           console.error("Error de solicitud HTTP:", error.request);
         } else {

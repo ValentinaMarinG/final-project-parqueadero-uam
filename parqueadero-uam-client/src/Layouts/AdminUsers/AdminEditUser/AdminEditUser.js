@@ -2,7 +2,7 @@ import "./AdminEditUser.scss";
 import Layout from "antd/es/layout/layout";
 import Logo from "../../../assets/png/Logo_UAM.png";
 import React, { useState } from "react";
-import { RegisterForm } from "./Form";
+import { AdminEditUserForm } from "./Form";
 import { Row } from "antd";
 
 
@@ -42,7 +42,7 @@ export const AdminEditUser = () => {
               </span>
             </label>
           </Row>
-          <RegisterForm handleChange={handleChange} />
+          <AdminEditUserForm handleChange={handleChange} />
         </div>
       </div>
       <img src={Logo} alt="Logo" className="logo-footer" />
