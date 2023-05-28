@@ -1,4 +1,4 @@
-import { Button, Layout, Table, Row, Col, Modal } from "antd";
+import { Button, Layout, Table, Row, Col, Modal, Alert } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 import { LayoutGeneral } from "../LayoutGeneral";
@@ -12,8 +12,8 @@ import { Form, Input } from "antd";
 const columns = [
   {
     title: "Nombre",
-    dataIndex: "name",
-    key: "name",
+    dataIndex: "firstname",
+    key: "firstname",
   },
   {
     title: "Apellido",
@@ -58,6 +58,10 @@ export const AdminUser = () => {
   const [visible2, setVisible2] = useState(false);
   const [document, setDocumentNumber] = useState("");
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+
   const handleOpenModal = (documento) => {
     console.log("modal");
     setVisible(true);
@@ -95,7 +99,19 @@ export const AdminUser = () => {
 
   const deleteUser = async (documento) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/v1/users/${documento}`);
+      const response = await axios
+        .delete(`http://localhost:5000/api/v1/users/${documento}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          if (response.status === 204) {
+            setAlertType("success");
+            setAlertMessage("El usuario ha sido eliminado con éxito");
+            setAlertVisible(true);
+          }
+        });
       console.log("Usuario eliminado:", response.data);
     } catch (error) {
       console.error("Error al eliminar el usuario:", error);
@@ -113,9 +129,8 @@ export const AdminUser = () => {
             },
           }
         );
-        const userData = response.data;
 
-        setUserData(userData.data);
+        setUserData(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -123,6 +138,9 @@ export const AdminUser = () => {
 
     getUserData(token);
   }, [token]);
+
+  const UserTable = () => {
+    return <Table dataSource={userData} columns={columns} pagination={{defaultPageSize:5}}/>;};
 
   return (
     <Layout className="dashboard-delegates">
@@ -180,13 +198,8 @@ export const AdminUser = () => {
             </Modal>
           </div>
         </Row>
-        <Row gutter={[10, 10]} style={{ marginBottom: "10px" }}>
-          <Table
-            className="lista-delegados"
-            columns={columns}
-            dataSource={userData}
-            pagination={{ defaultPageSize: 5 }}
-          />
+        <Row id="row-tabla" gutter={[10, 10]} style={{ marginBottom: "10px" }}>
+          <UserTable />
         </Row>
       </div>
     </Layout>

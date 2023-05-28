@@ -96,15 +96,21 @@ export const RegisterForm = () => {
     }
     console.log("Form Data:", Object.fromEntries(formData));
 
+    const token = localStorage.getItem('token');
+
     axios
-      .post("http://localhost:5000/api/v1/users/admin", formData)
+      .post("http://localhost:5000/api/v1/users/admin", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         if (response.status === 201) {
           setShowSuccessMessage(true);
           setTimeout(() => {
             navigate("/LogIn");
           }, 2000);
-
+          
           navigate("/LogIn");
         }
         console.log(response.data);
@@ -142,6 +148,7 @@ export const RegisterForm = () => {
       console.error(error);
     }
   };
+
 
   const fetchMunicipios = async (departamento) => {
     try {
