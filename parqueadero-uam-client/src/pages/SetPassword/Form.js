@@ -2,6 +2,7 @@ import React from "react";
 import { Form, Input, Button, message } from "antd";
 import * as Yup from "yup";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "./SetPassword.scss";
 
 const validationSchema = Yup.object().shape({
@@ -22,6 +23,7 @@ const validationSchema = Yup.object().shape({
 
 const FormComponent = ({ onSubmit, loading }) => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFinish = async (values) => {
     try {
@@ -33,32 +35,36 @@ const FormComponent = ({ onSubmit, loading }) => {
 
       const token = localStorage.getItem("token");
 
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
-      console.log(token);
-
       await axios.post("http://localhost:5000/api/v1/users/change-password", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        
-      });
+      }).then((response) => {if(response.status===200){navigate("/user/profile");}}).catch((error)=>{console.log(error.response.status)});
       
       form.resetFields();
     } catch (error) {
+        if (error.response && error.response.status === 401){
+            form.setFields([
+              {
+                name: "contrasenaActual",
+                errors: ["La contraseña actual es incorrecta"],
+              },
+            ]);
+          }
         console.log("Error de solicitud:", error);
         if (error.response) {
           console.log("Código de error:", error.response.status);
           console.log("Mensaje de error:", error.response.data);
-          // Manejar el mensaje de error recibido del servidor
         } else {
           console.log("Error desconocido:", error.message);
-          // Manejar cualquier otro tipo de error
         }
       }
+  };
+
+  const onCancel = () => {
+    form.resetFields();
+    navigate("/user/profile");
   };
 
   const showSuccessMessage = () => {
@@ -114,7 +120,7 @@ const FormComponent = ({ onSubmit, loading }) => {
       </div>
       <Form.Item>
         <div className="div-button">
-          <Button className="button" danger>
+          <Button className="button" danger onClick={onCancel}>
             Cancelar
           </Button>
           <Button className="button" type="primary" htmlType="submit">
