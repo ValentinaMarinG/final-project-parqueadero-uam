@@ -28,7 +28,7 @@ def authentication_login():
         return {"error": "Wrong email or password"}, HTTPStatus.UNAUTHORIZED
 
     if not user.get('active', False):
-        return {"error": "Account is not active"}, HTTPStatus.UNAUTHORIZED
+        return {"error": "La cuenta no esta activa"}, HTTPStatus.UNAUTHORIZED
 
     access_token = create_access_token(identity=str(user["_id"]), additional_claims={'rol': rol})
     refresh_token = create_refresh_token(identity=str(user["_id"]), additional_claims={'rol': rol})

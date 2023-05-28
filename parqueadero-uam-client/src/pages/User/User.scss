@@ -150,6 +150,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-around;
   }
 
   .no-marker {
@@ -178,4 +179,16 @@
     text-align: center;
     font-family: sans-serif;
     border-radius: 5px;
+  }
+
+  .input-imagen{
+    width: 156px;
+    margin-right: 20px;
+    background-color: $primary-color;
+    border-color: $primary-color;
+  }
+
+  .subir-avatar{
+    margin-right: 20px;
+    background-color: $secondary-color;
   }
