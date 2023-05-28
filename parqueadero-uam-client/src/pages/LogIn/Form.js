@@ -49,10 +49,7 @@ export const LoginForm = () => {
           const refresh_token = response.data.refresh_token;
           localStorage.setItem("token", token);
           localStorage.setItem("refresh_token", refresh_token);
-          console.log(localStorage.getItem("token"));
-          console.log(localStorage.getItem("refresh_token"));
           const rol = getRolFromToken(token);
-          console.log(rol);
           setTimeout(() => {
             if (rol === "user") {
               navigate("/user/profile");
@@ -63,7 +60,6 @@ export const LoginForm = () => {
             }
           }, 2000);
         }
-        console.log(response.data);
       })
       .catch((error) => {
         if (error.response) {

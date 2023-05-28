@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Avatar, Col, Row, Table, Button } from "antd";
+import { Layout, Avatar, Col, Row, Table, Button, Spin } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import cupula from "../../assets/jpg/sobre_uam.jpg";
 import { UserMenuSider } from "../../components/MenuComponents/UserMenuSider/UserMenuSider";
@@ -9,11 +9,33 @@ import "./User.scss";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-
 export const User = () => {
   const token = localStorage.getItem("token");
   const [userData, setUserData] = useState(null);
   const [userPlates, setUserPlates] = useState([]);
+  const [avatar, setAvatar] = useState(null);
+
+  const handleAvatarChange = (event) => {
+    const file = event.target.files[0];
+    setAvatar(file);
+  };
+
+  const handleUploadAvatar = () => {
+    const formData = new FormData();
+    formData.append("avatar", avatar);
+    axios.put("http://localhost:5000/api/v1/users/avatar", formData, 
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+       .then((response) => {
+
+       })
+       .catch((error) => {
+
+       });
+  };
 
   useEffect(() => {
     const getUserData = async (token) => {
@@ -30,7 +52,6 @@ export const User = () => {
 
         setUserData(userData.data);
         setUserPlates([userData.data.plate]);
-
       } catch (error) {
         console.error(error);
       }
@@ -43,7 +64,12 @@ export const User = () => {
   const { Content, Header, Footer } = Layout;
 
   if (!userData) {
-    return <div>Cargando...</div>;
+    return (
+      <div className="cargando-pagina">
+        <Spin tip="Cargando" size="large">
+        </Spin>
+      </div>
+    );
   }
 
   const {
@@ -55,14 +81,12 @@ export const User = () => {
     phoneNumber,
   } = userData;
 
-  console.log(userPlates)
 
   const data = userPlates.map((plate, index) => ({
     key: index.toString(),
     plate: plate,
   }));
 
-  console.log(data)
 
   const columns = [
     {
@@ -71,7 +95,12 @@ export const User = () => {
       key: "plate",
       render: (userPlates) => (
         <ul className="ul">
-          {userPlates && userPlates.map((plate) => <li className="no-marker" key={plate}>{plate}</li>)}
+          {userPlates &&
+            userPlates.map((plate) => (
+              <li className="no-marker" key={plate}>
+                {plate}
+              </li>
+            ))}
         </ul>
       ),
     },
@@ -97,12 +126,26 @@ export const User = () => {
           </div>
           <div className="principal">
             <Row gutter={[120, 120]}>
-              <Col>
-                <Avatar
-                  className="principal-avatar"
-                  size={140}
-                  icon={<UserOutlined />}
+            <Col>
+                {avatar ? (
+                  <Avatar
+                    className="principal-avatar"
+                    size={140}
+                    src={URL.createObjectURL(avatar)}
+                  />
+                ) : (
+                  <Avatar
+                    className="principal-avatar"
+                    size={140}
+                    icon={<UserOutlined />}
+                  />
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
                 />
+                <button onClick={handleUploadAvatar}>Subir Avatar</button>
               </Col>
               <Col>
                 <div className="conatiner-info">
@@ -137,8 +180,12 @@ export const User = () => {
                   </label>
                 </div>
                 <div className="botones-perfil">
-                  <Button className="button-edit"><Link to={"/../user/edit"}>Editar información</Link></Button>
-                  <Button className="button-edit"><Link to={"/../user/setpassword"}>Cambiar contraseña</Link></Button>
+                  <Button className="button-edit">
+                    <Link to={"/../user/edit"}>Editar información</Link>
+                  </Button>
+                  <Button className="button-edit">
+                    <Link to={"/../user/setpassword"}>Cambiar contraseña</Link>
+                  </Button>
                 </div>
               </Col>
             </Row>
