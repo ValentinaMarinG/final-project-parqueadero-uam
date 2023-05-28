@@ -1,15 +1,15 @@
-import "./RegisterUser.scss";
+import "./AdminEditUser.scss";
 import Layout from "antd/es/layout/layout";
-import Logo from "../../assets/png/Logo_UAM.png";
+import Logo from "../../../assets/png/Logo_UAM.png";
 import React, { useState } from "react";
-import { RegisterForm } from "./Form";
+import { AdminEditUserForm } from "./Form";
 import { Row } from "antd";
 
 
 const url_uam =
   "https://www.autonoma.edu.co/uamvirtual?errorcode=4#seccion-uamvirtual";
 
-export const RegisterUser = () => {
+export const AdminEditUser = () => {
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -27,10 +27,10 @@ export const RegisterUser = () => {
   };
 
   return (
-    <Layout className="Layout-register">
-      <div className="middle-box">
-        <div className="register-box">
-          <h1>Registro</h1>
+    <Layout className="Layout-edit-user">
+      <div className="middle-container">
+        <div className="edit-box">
+          <h1>Editar información de Usuario</h1>
           <Row>
             <label className="texto-datos">
               Ingresa los datos de la{" "}
@@ -42,10 +42,10 @@ export const RegisterUser = () => {
               </span>
             </label>
           </Row>
-          <RegisterForm handleChange={handleChange} />
+          <AdminEditUserForm handleChange={handleChange} />
         </div>
       </div>
-      <img src={Logo} alt="Logo" className="bottom-logo" />
+      <img src={Logo} alt="Logo" className="logo-footer" />
     </Layout>
   );
 };

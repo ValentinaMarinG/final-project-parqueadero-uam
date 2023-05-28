@@ -5,6 +5,8 @@ import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -19,6 +21,7 @@ const initialValues = {
   documentNumber: "",
   department: "",
   municipality: "",
+  active: "",
 };
 
 const validationSchema = Yup.object().shape({
@@ -55,6 +58,7 @@ const validationSchema = Yup.object().shape({
     .matches(/^[0-9]+$/, "El número de documento debe contener solo números"),
   department: Yup.string().required("El departamento es requerido"),
   municipality: Yup.string().required("El municipio es requerido"),
+  active: Yup.string().required("El estado es requerido"),
 });
 
 const onSubmit = (values) => {
@@ -75,10 +79,13 @@ const onSubmit = (values) => {
     .catch((error) => {
       // Manejar el error si ocurre
       console.error(error);
-    }); 
+    });
 };
 
-export const RegisterForm = () => {
+export const AdminEditUserForm = () => {
+  const { document } = useParams();
+  console.log(document);
+
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
   const [departamentos, setDepartamentos] = useState([]);
   const [municipios, setMunicipios] = useState([]);
@@ -96,21 +103,15 @@ export const RegisterForm = () => {
     }
     console.log("Form Data:", Object.fromEntries(formData));
 
-    const token = localStorage.getItem('token')
     axios
-      .post("http://localhost:5000/api/v1/users/admin", formData,  
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+      .put(`http://localhost:5000/api/v1/users/admin/${document}`, formData)
       .then((response) => {
         if (response.status === 201) {
           setShowSuccessMessage(true);
           setTimeout(() => {
             navigate("/LogIn");
           }, 2000);
-          
+
           navigate("/LogIn");
         }
         console.log(response.data);
@@ -149,7 +150,6 @@ export const RegisterForm = () => {
     }
   };
 
-
   const fetchMunicipios = async (departamento) => {
     try {
       setLoading(true);
@@ -187,7 +187,7 @@ export const RegisterForm = () => {
   }, [showSuccessMessage]);
 
   return (
-    <div className="formulario-dimensiones">
+    <div className="formulario-tamaño">
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -325,7 +325,7 @@ export const RegisterForm = () => {
               </Col>
             </Row>
 
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
               <Col span={12} style={{ paddingRight: "10px" }}>
                 <Field name="department">
                   {({ field }) => (
@@ -386,12 +386,41 @@ export const RegisterForm = () => {
                 />
               </Col>
             </Row>
-            <div className="button-container">
-              <Button danger onClick={() => window.location.replace("/admin/users")}>
+            <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
+              <Col span={12}>
+                <Field name="active">
+                  {({ field, form }) => (
+                    <Select
+                      className="select-custom"
+                      placeholder="Activo"
+                      value={field.value}
+                      onChange={(value) => {
+                        form.setFieldValue("active", value);
+                      }}
+                      onBlur={field.onBlur}
+                    >
+                      <Option value="" disabled>
+                        Activo
+                      </Option>
+                      <Option value={true}>Si</Option>
+                      <Option value={false}>No</Option>
+                    </Select>
+                  )}
+                </Field>
+
+                <ErrorMessage
+                  name="active"
+                  component="div"
+                  className="error-message"
+                />
+              </Col>
+            </Row>
+            <div className="buttom-container">
+              <Button danger onClick={() => window.location.replace("/admin")}>
                 Cancelar
               </Button>
-              <Button type="primary" htmlType="submit" danger onClick={() => window.location.replace("/admin/users")}>
-                Regístrar
+              <Button type="primary" htmlType="submit">
+                Guardar
               </Button>
             </div>
           </Form>
