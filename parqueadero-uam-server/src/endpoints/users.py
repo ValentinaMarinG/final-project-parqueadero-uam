@@ -11,6 +11,7 @@ from cerberus import Validator
 import sendgrid
 from venv.constants import SENDGRID_API_KEY, SENDGRID_SENDER_EMAIL
 from sendgrid.helpers.mail import Mail
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
