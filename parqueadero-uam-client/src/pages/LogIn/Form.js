@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Button, Input } from "antd";
+import { Alert, Button, Input } from "antd";
 import { useState } from "react";
 import {
   UserOutlined,
@@ -29,6 +29,17 @@ const getRolFromToken = (token) => {
   }
 };
 
+const getActiveFromToken = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    const active = decodedToken?.active;
+    return active;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+};
+
 const validationSchema = Yup.object().shape({
   email: Yup.string().required("El correo es requerido"),
   password: Yup.string().required("La contraseña es requerida"),
@@ -51,15 +62,25 @@ export const LoginForm = () => {
           localStorage.setItem("token", token);
           localStorage.setItem("refresh_token", refresh_token);
           const rol = getRolFromToken(token);
-          setTimeout(() => {
-            if (rol === "user") {
-              navigate("/user/profile");
-            } else if (rol === "delegate") {
-              navigate("/delegate");
-            } else {
-              navigate("/admin");
-            }
-          }, 2000);
+          const activo = getActiveFromToken(token);
+          if (activo) {
+            setTimeout(() => {
+              if (rol === "user") {
+                navigate("/user/profile");
+              } else if (rol === "delegate") {
+                navigate("/delegate");
+              } else {
+                navigate("/admin");
+              }
+            }, 2000);
+          } else {
+            <Alert
+              message="Error"
+              description="El usuario No esta activo en el sistema"
+              type="error"
+              showIcon
+            />;
+          }
         }
       })
       .catch((error) => {
