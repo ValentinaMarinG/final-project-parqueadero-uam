@@ -81,12 +81,10 @@ export const User = () => {
     phoneNumber,
   } = userData;
 
-
   const data = userPlates.map((plate, index) => ({
     key: index.toString(),
     plate: plate,
   }));
-
 
   const columns = [
     {

@@ -34,4 +34,3 @@ def authentication_login():
     refresh_token = create_refresh_token(identity=str(user["_id"]), additional_claims={'rol': rol})
 
     return jsonify({'access_token': access_token, 'refresh_token': refresh_token}),HTTPStatus.OK
-

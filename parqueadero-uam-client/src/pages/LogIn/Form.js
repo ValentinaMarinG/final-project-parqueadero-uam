@@ -35,6 +35,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export const LoginForm = () => {
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
@@ -67,6 +68,8 @@ export const LoginForm = () => {
             "Error de respuesta del servidor:",
             error.response.data
           );
+          setShowErrorMessage(true);
+          setErrorMessage("Usuario o contraseña incorrecta");
         } else if (error.request) {
           console.error("Error de solicitud HTTP:", error.request);
         } else {
@@ -110,7 +113,7 @@ export const LoginForm = () => {
               visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
             }
           />
-          {errorMessage && (
+          {showErrorMessage && (
             <div className="error-message-password">{errorMessage}</div>
           )}
           <ErrorMessage

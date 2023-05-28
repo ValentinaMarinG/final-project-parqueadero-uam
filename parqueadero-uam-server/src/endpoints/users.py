@@ -11,6 +11,7 @@ from cerberus import Validator
 import sendgrid
 from venv.constants import SENDGRID_API_KEY, SENDGRID_SENDER_EMAIL
 from sendgrid.helpers.mail import Mail
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
@@ -81,7 +82,6 @@ def read_one():
         return {"error": "Resource not found"}, HTTPStatus.NOT_FOUND
 
     return {"data": user}, HTTPStatus.OK
-
 
 
 #Crear usuario, sin autenticación
@@ -299,11 +299,11 @@ def change_password():
     new_password = request.json.get("new_password")
 
     # Verificar si la contraseña actual es correcta
-    if not User.check_password_hash(user['password'], current_password):
+    if not check_password_hash(user['password'], current_password):
         return jsonify({'error': 'Contraseña actual incorrecta'}), HTTPStatus.UNAUTHORIZED
 
     # Generar el hash de la nueva contraseña
-    new_password_hash = User.generate_password_hash(new_password)
+    new_password_hash = generate_password_hash(new_password)
 
     # Actualizar la contraseña del usuario en la base de datos
     db['users'].update_one({"_id": obj_id}, {"$set": {"password": new_password_hash}})
