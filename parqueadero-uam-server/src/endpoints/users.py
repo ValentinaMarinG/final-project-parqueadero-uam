@@ -397,7 +397,7 @@ def create_user_admin():
         # Guardar el usuario en la base de datos
         db['users'].insert_one(usuario_json)
 
-        enviar_correo_sendgrid(email, 'Bienvenido a parqueadero UAM', '¡Gracias por registrarte en nuestro sistema!')
+        enviar_correo_sendgrid(email, 'Bienvenido a parqueadero UAM', '¡Fuiste registrado en el sistema de parqueadero UAM por uno de nuestros administradores!')
         
         return jsonify({"data": usuario_json}), HTTPStatus.CREATED
     except Exception as e:
