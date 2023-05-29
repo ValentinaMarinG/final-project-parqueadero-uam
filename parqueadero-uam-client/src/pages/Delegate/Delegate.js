@@ -8,6 +8,9 @@ import { FooterPage } from "../../components/FooterPage/FooterPage";
 import Input from "antd/es/input/Input";
 import { CarOutlined } from "@ant-design/icons";
 import { SiderUser } from "../../components/MenuComponents/MenuSiderDelegate/DelegateSider";
+import Logo from "../../assets/png/logo.png";
+import { Link } from "react-router-dom";
+import { LogoutOutlined } from "@ant-design/icons";
 
 const Parqueadero = "Vagón";
 const capacidad = 50;
@@ -45,8 +48,6 @@ export const Delegate = (props) => {
   };
 
   const [messageApi, contextHolder] = message.useMessage();
-
-  const [menuCollapsed, setMenuCollapsed] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -98,22 +99,18 @@ export const Delegate = (props) => {
   return (
     <Layout>
       {contextHolder}
-      <SiderUser menuCollapsed={menuCollapsed} />
-      <Layout
-        className="Layout-delegate"
-        style={{ marginLeft: menuCollapsed ? "0px" : "50px" }}
-      >
-        <Header className="Layout-delegate-header">
-          <MenuTop
-            className="header-menutop"
-            menuCollapsed={menuCollapsed}
-            setMenuCollapsed={setMenuCollapsed}
-          />
-        </Header>
+      <Header className="Layout-home-header">
+        <img className="Layout-home-header-left-logo" src={Logo} alt="Logo" />
+        <Button className="button__right" type="link">
+          <Link to={"/../LogIn"} className="link">
+            <LogoutOutlined />
+          </Link>
+        </Button>
+      </Header>
         <Content className="content">
-          <div className="content-title">
+          <div className="content-delegate-title">
             <label>Parqueadero UAM</label>
-            <label className="content-title-subtitle">
+            <label className="content-delegate-title-subtitle">
               Parqueadero {Parqueadero}
             </label>
           </div>
@@ -202,6 +199,5 @@ export const Delegate = (props) => {
           <FooterPage />
         </Footer>
       </Layout>
-    </Layout>
   );
 };

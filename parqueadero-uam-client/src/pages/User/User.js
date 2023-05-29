@@ -21,18 +21,22 @@ export const User = () => {
     setAvatar(file);
   };
 
-  /* const handleUploadAvatar = () => {
+  const handleUploadAvatar = () => {
     const formData = new FormData();
     formData.append("avatar", avatar);
-    axios
-      .put("http://localhost:5000/api/v1/users/avatar", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {})
-      .catch((error) => {});
-  }; */
+    axios.put("http://localhost:5000/api/v1/users/avatar", formData, 
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+       .then((response) => {
+
+       })
+       .catch((error) => {
+
+       });
+  };
 
   useEffect(() => {
     const getUserData = async (token) => {
@@ -46,13 +50,13 @@ export const User = () => {
           }
         );
         const userData = response.data;
-        /* if (userData.avatar) {
+         if (userData.avatar) {
           setAvatarUrl(avatarUrl);
-        } */
+        
 
         setUserData(userData.data);
         setUserPlates([userData.data.plate]);
-      } catch (error) {
+      }} catch (error) {
         console.error(error);
       }
     };
@@ -149,6 +153,12 @@ export const User = () => {
                     icon={<UserOutlined />}
                   />
                 )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                />
+                <button onClick={handleUploadAvatar}>Subir Avatar</button>
               </Col>
               <Col>
                 <div className="conatiner-info">
@@ -183,16 +193,6 @@ export const User = () => {
                   </label>
                 </div>
                 <div className="botones-perfil">
-                  <Input
-                    className="input-imagen"
-                    placeholder="Elegir avatar"
-                    type="file"
-                    accept="image/*"
-                    /* onChange={handleAvatarChange} */
-                  />
-                  {/* <Button className="subir-avatar" onClick={handleUploadAvatar}>
-                    Subir avatar
-                  </Button> */}
                   <Button className="button-edit">
                     <Link to={"/../user/edit"}>Editar información</Link>
                   </Button>

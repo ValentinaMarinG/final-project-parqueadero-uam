@@ -397,7 +397,7 @@ def create_user_admin():
         # Guardar el usuario en la base de datos
         db['users'].insert_one(usuario_json)
 
-        enviar_correo_sendgrid(email, 'Bienvenido a parqueadero UAM', '¡Gracias por registrarte en nuestro sistema!')
+        enviar_correo_sendgrid(email, 'Bienvenido a parqueadero UAM', '¡Fuiste registrado en el sistema de parqueadero UAM por uno de nuestros administradores!')
         
         return jsonify({"data": usuario_json}), HTTPStatus.CREATED
     except Exception as e:
@@ -435,28 +435,34 @@ def update_user_admin(documento):
         
         # Actualizar los campos del usuario con los datos recibidos
         if 'documentType' in request.form:
-            user['documentType'] = request.form['documentType']
+            if request.form['documentType'] != "":
+                user['documentType'] = request.form['documentType']
         if 'documentNumber' in request.form:
-            #validar numero de documento
-            documentNumber=request.form['documentNumber']
-            # Verificar si ya existe un usuario con el mismo documentNumber
-            existing_user = db['users'].find_one({'documentNumber': documentNumber})
-            if existing_user:
-                return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST  
-            user['documentNumber'] = documentNumber
+            if request.form['documentNumber'] != "":
+                #validar numero de documento
+                documentNumber=request.form['documentNumber']
+                # Verificar si ya existe un usuario con el mismo documentNumber
+                existing_user = db['users'].find_one({'documentNumber': documentNumber})
+                if existing_user:
+                    return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST  
+                user['documentNumber'] = documentNumber
         if 'firstname' in request.form:
-            user['firstname'] = request.form['firstname']
+            if request.form['firstname'] != "":
+                user['firstname'] = request.form['firstname']
         if 'lastname' in request.form:
-            user['lastname'] = request.form['lastname']
+            if request.form['lastname'] != "":
+                user['lastname'] = request.form['lastname']
         if 'email' in request.form:
-            email=request.form['email']
-            # Verificar si ya existe un usuario con el mismo documentNumber
-            existing_user_em = db['users'].find_one({'email': email})
-            if existing_user_em:
-                return {'error': 'Ya existe un usuario con el mismo correo'}, HTTPStatus.BAD_REQUEST  
-            user['email'] = email
+            if request.form['email'] != "":
+                email=request.form['email']
+                # Verificar si ya existe un usuario con el mismo documentNumber
+                existing_user_em = db['users'].find_one({'email': email})
+                if existing_user_em:
+                    return {'error': 'Ya existe un usuario con el mismo correo'}, HTTPStatus.BAD_REQUEST  
+                user['email'] = email
         if 'phoneNumber' in request.form:
-            user['phoneNumber'] = request.form['phoneNumber']
+            if request.form['phoneNumber'] != "":
+                user['phoneNumber'] = request.form['phoneNumber']
         updated_fields = {field: value for field, value in request.form.items() if field in schema}
         validator = Validator(schema_patch)
         if not validator.validate(updated_fields):
