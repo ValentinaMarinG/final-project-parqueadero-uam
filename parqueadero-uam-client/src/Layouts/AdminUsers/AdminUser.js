@@ -140,11 +140,20 @@ export const AdminUser = () => {
   }, [token]);
 
   const UserTable = () => {
-    return <Table dataSource={userData} columns={columns} pagination={{defaultPageSize:5}}/>;};
+    return <Table dataSource={userData} columns={columns} pagination={{defaultPageSize: 5}}/>;
+  };
 
   return (
     <Layout className="dashboard-delegates">
       <div className="div-delegate">
+      {alertVisible && (
+          <Alert
+            message={alertMessage}
+            type={alertType}
+            showIcon
+            onClose={() => setAlertVisible(false)}
+          />
+        )}
         <Row gutter={[16, 16]} style={{ marginBottom: "40px" }}>
           <div className="title">
             <label>Dashboard Parqueadero UAM</label>

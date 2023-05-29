@@ -25,25 +25,18 @@ const initialValues = {
 };
 
 const validationSchema = Yup.object().shape({
-  firstname: Yup.string().required("El nombre es requerido"),
-  lastname: Yup.string().required("El apellido es requerido"),
   email: Yup.string()
-    .email("Correo inválido")
-    .required("El correo es requerido"),
+    .email("Correo inválido"),
   phoneNumber: Yup.string()
-    .required("El celular es requerido")
     .matches(/^[0-9]+$/, "El celular debe contener solo números"),
   password: Yup.string()
-    .required("La contraseña es requerida")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
       "La contraseña debe contener al menos una mayúscula, una minúscula, un número y tener como mínimo 8 caracteres"
     ),
   confirmarContraseña: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Las contraseñas deben ser iguales")
-    .required("Debes confirmar la contraseña"),
+    .oneOf([Yup.ref("password"), null], "Las contraseñas deben ser iguales"),
   documentType: Yup.string()
-    .required("El tipo de documento es requerido")
     .oneOf(
       [
         "Tarjeta de identidad",
@@ -54,11 +47,7 @@ const validationSchema = Yup.object().shape({
       "Tipo de documento inválido"
     ),
   documentNumber: Yup.string()
-    .required("El número de documento es requerido")
-    .matches(/^[0-9]+$/, "El número de documento debe contener solo números"),
-  department: Yup.string().required("El departamento es requerido"),
-  municipality: Yup.string().required("El municipio es requerido"),
-  active: Yup.string().required("El estado es requerido"),
+    .matches(/^[0-9]+$/, "El número de documento debe contener solo números")
 });
 
 const onSubmit = (values) => {
@@ -103,16 +92,22 @@ export const AdminEditUserForm = () => {
     }
     console.log("Form Data:", Object.fromEntries(formData));
 
+    const token = localStorage.getItem('token');
+    
     axios
-      .put(`http://localhost:5000/api/v1/users/admin/${document}`, formData)
+      .patch(`http://localhost:5000/api/v1/users/${document}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         if (response.status === 201) {
           setShowSuccessMessage(true);
           setTimeout(() => {
-            navigate("/LogIn");
+            navigate("/admin/users");
           }, 2000);
 
-          navigate("/LogIn");
+          navigate("/admin/users");
         }
         console.log(response.data);
       })

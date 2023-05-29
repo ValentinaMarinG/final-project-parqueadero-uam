@@ -43,7 +43,7 @@ const validationSchema = Yup.object().shape({
     .required("El tipo de documento es requerido")
     .oneOf(
       [
-        "Tarjeta de identidad",
+        "Tarjeta de identidad",
         "Cédula de Ciudadanía",
         "Cédula de Extranjería",
         "Pasaporte",
@@ -57,26 +57,6 @@ const validationSchema = Yup.object().shape({
   municipality: Yup.string().required("El municipio es requerido"),
 });
 
-const onSubmit = (values) => {
-  const { confirmarContraseña, ...data } = values;
-
-  const formData = new FormData();
-  for (let key in data) {
-    formData.append(key, data[key]);
-  }
-  console.log("Form Data:", Object.fromEntries(formData));
-
-  axios
-    .post("http://localhost:5000/api/v1/auth/register", values)
-    .then((response) => {
-      // Manejar la respuesta del servidor
-      console.log(response.data);
-    })
-    .catch((error) => {
-      // Manejar el error si ocurre
-      console.error(error);
-    }); 
-};
 
 export const RegisterForm = () => {
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
@@ -85,7 +65,7 @@ export const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const onSubmit = (values, { setSubmitting, resetForm }) => {
     const { confirmarContraseña, ...data } = values;
@@ -97,6 +77,7 @@ export const RegisterForm = () => {
     console.log("Form Data:", Object.fromEntries(formData));
 
     const token = localStorage.getItem('token')
+
     axios
       .post("http://localhost:5000/api/v1/users/admin", formData,  
     {
@@ -108,16 +89,14 @@ export const RegisterForm = () => {
         if (response.status === 201) {
           setShowSuccessMessage(true);
           setTimeout(() => {
-            navigate("/LogIn");
+            //navigate("/admin/users");
           }, 2000);
-          
-          navigate("/LogIn");
         }
-        console.log(response.data);
+        console.log("respuesta "+response.data);
       })
       .catch((error) => {
         // Manejar el error si ocurre
-        console.error(error);
+        console.error("error "+error);
       })
       .finally(() => {
         setSubmitting(false);
@@ -387,10 +366,10 @@ export const RegisterForm = () => {
               </Col>
             </Row>
             <div className="button-container">
-              <Button danger onClick={() => window.location.replace("/admin/users")}>
+              <Button >
                 Cancelar
               </Button>
-              <Button type="primary" htmlType="submit" danger onClick={() => window.location.replace("/admin/users")}>
+              <Button type="primary" htmlType="submit" >
                 Regístrar
               </Button>
             </div>
