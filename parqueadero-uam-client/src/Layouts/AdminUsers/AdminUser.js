@@ -110,9 +110,11 @@ export const AdminUser = () => {
             setAlertType("success");
             setAlertMessage("El usuario ha sido eliminado con éxito");
             setAlertVisible(true);
+            console.log("Usuario eliminado:", response.data);
           }
+        }).catch((error) => {
+          console.log(error.response.data);
         });
-      console.log("Usuario eliminado:", response.data);
     } catch (error) {
       console.error("Error al eliminar el usuario:", error);
     }
@@ -140,7 +142,22 @@ export const AdminUser = () => {
   }, [token]);
 
   const UserTable = () => {
-    return <Table dataSource={userData} columns={columns} pagination={{defaultPageSize: 5}}/>;
+    const handleRowClick = (record) => {
+      const document = record.documentNumber;
+      console.log("Documento seleccionado:", document);
+      navigate(`admin/users/profile/${document}`);
+    };
+
+    return (
+      <Table
+        dataSource={userData}
+        columns={columns}
+        pagination={{ defaultPageSize: 5 }}
+        onRow={(record) => ({
+          onClick: () => handleRowClick(record),
+        })}
+      />
+    );
   };
 
   return (

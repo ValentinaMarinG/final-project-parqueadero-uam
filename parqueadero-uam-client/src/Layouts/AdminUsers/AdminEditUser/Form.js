@@ -52,7 +52,6 @@ const validationSchema = Yup.object().shape({
 
 export const AdminEditUserForm = () => {
   const { document } = useParams();
-  console.log(document);
 
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
   const [departamentos, setDepartamentos] = useState([]);
@@ -69,7 +68,6 @@ export const AdminEditUserForm = () => {
     for (let key in data) {
       formData.append(key, data[key]);
     }
-    console.log("Form Data:", Object.fromEntries(formData));
 
     const token = localStorage.getItem('token');
     
@@ -80,18 +78,18 @@ export const AdminEditUserForm = () => {
         },
       })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200) {
           setShowSuccessMessage(true);
           setTimeout(() => {
-            navigate("/admin/users");
+            navigate("/admin");
           }, 2000);
-
-          navigate("/admin/users");
         }
-        console.log(response.data);
       })
       .catch((error) => {
         // Manejar el error si ocurre
+        console.log(error.response.status);
+        console.log("-------------------");
+        console.log(error.response.data);
         console.error(error);
       })
       .finally(() => {
@@ -109,7 +107,6 @@ export const AdminEditUserForm = () => {
       const response = await axios.get(
         "https://www.datos.gov.co/resource/xdk5-pm3f.json?$select=departamento"
       );
-      //console.log(response);
       const dataFilter = [...new Set(response.data.map(JSON.stringify))].map(
         JSON.parse
       );
@@ -362,7 +359,7 @@ export const AdminEditUserForm = () => {
             </Row>
             <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
               <Col span={12}>
-                <Field name="active">
+                <Field name="active" >
                   {({ field, form }) => (
                     <Select
                       className="select-custom"

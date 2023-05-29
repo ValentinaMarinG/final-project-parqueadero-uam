@@ -111,7 +111,6 @@ export const RegisterForm = () => {
       const response = await axios.get(
         "https://www.datos.gov.co/resource/xdk5-pm3f.json?$select=departamento"
       );
-      //console.log(response);
       const dataFilter = [...new Set(response.data.map(JSON.stringify))].map(
         JSON.parse
       );

@@ -14,6 +14,7 @@ import { RegisterUser } from "../Layouts/AdminUsers/RegisterUser";
 import { RegisterDelegate } from "../Layouts/AdminDelegates/RegisterDelegate";
 import { AdminEditUser } from "../Layouts/AdminUsers/AdminEditUser/AdminEditUser";
 import { AdminEditUserForm } from "../Layouts/AdminUsers/AdminEditUser/Form";
+import { UserProfile } from "../Layouts/AdminUsers/UserProfile";
 
 /* Components > Layouts > Pages > routes */
 const AdminRoutes = [
@@ -24,6 +25,7 @@ const AdminRoutes = [
     /* {path:"/admin/parkings/register", component:RegisterParking, layout:RegisterParking}, */
     {path:"/admin/users/register", component:RegisterUser, layout:RegisterUser},
     {path:"/admin/users/:document", component:AdminEditUserForm, layout:AdminEditUser},
+    {path:"/admin/users/profile/:document", component:UserProfile, layout:UserProfile},
 ];
 
 const GeneralRoutes = [

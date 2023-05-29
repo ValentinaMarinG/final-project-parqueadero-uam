@@ -8,6 +8,7 @@ import { BrowserRouter as Routes, Route, Outlet } from "react-router-dom";
 import { AdminDelegates } from "./AdminDelegates/AdminDelegates";
 import { RegisterParking } from "./AdminParkings/RegisterParking";
 import { AdminUser } from "./AdminUsers/AdminUser";
+import { AdminProfile } from "./AdminProfile/AdminProfile";
 
 export const LayoutGeneral = (props) => {
   const { children } = props;
@@ -26,6 +27,8 @@ export const LayoutGeneral = (props) => {
       return <RegisterParking />
     } else if (rutaMenuSider === '/admin/users') { 
       return <AdminUser />
+    } else {
+      return <AdminProfile />
     }
     return null;
   };

@@ -23,7 +23,6 @@ export const RegisterUser = () => {
 
   const handleChange = (values) => {
     setForm(values);
-    console.table(form);
   };
 
   return (
