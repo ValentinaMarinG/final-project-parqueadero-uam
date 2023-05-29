@@ -140,13 +140,27 @@ export const AdminUser = () => {
   }, [token]);
 
   const UserTable = () => {
-    return <Table dataSource={userData} columns={columns} pagination={{defaultPageSize: 5}}/>;
+    const handleRowClick = (record) => {
+      const document = record.documentNumber;
+      console.log("Documento seleccionado:", document);
+    };
+
+    return (
+      <Table
+        dataSource={userData}
+        columns={columns}
+        pagination={{ defaultPageSize: 5 }}
+        onRow={(record) => ({
+          onClick: () => handleRowClick(record),
+        })}
+      />
+    );
   };
 
   return (
     <Layout className="dashboard-delegates">
       <div className="div-delegate">
-      {alertVisible && (
+        {alertVisible && (
           <Alert
             message={alertMessage}
             type={alertType}

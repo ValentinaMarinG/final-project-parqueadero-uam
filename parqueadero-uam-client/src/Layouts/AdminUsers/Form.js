@@ -96,11 +96,14 @@ export const RegisterForm = () => {
       })
       .catch((error) => {
         // Manejar el error si ocurre
+        console.log("----------------------");
+        console.log(error.response.status);
+        console.log(error.response.data);
         console.error("error "+error);
       })
       .finally(() => {
         setSubmitting(false);
-        resetForm();
+        //resetForm();
       });
   };
 

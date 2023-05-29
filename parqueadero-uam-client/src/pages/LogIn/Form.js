@@ -69,7 +69,7 @@ export const LoginForm = () => {
               } else if (rol === "delegate") {
                 navigate("/delegate");
               } else {
-                navigate("/admin");
+                navigate("/admin/profile");
               }
             }, 2000);
           }
