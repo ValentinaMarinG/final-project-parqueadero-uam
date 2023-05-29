@@ -20,8 +20,6 @@ export const LayoutGeneral = (props) => {
     setRutaMenuSider(ruta);
   };
 
-  console.log(rutaMenuSider);
-
   const renderizarContenido = () => {
     if (rutaMenuSider === '/admin/delegates') {
       return <AdminDelegates />;

@@ -110,9 +110,11 @@ export const AdminUser = () => {
             setAlertType("success");
             setAlertMessage("El usuario ha sido eliminado con éxito");
             setAlertVisible(true);
+            console.log("Usuario eliminado:", response.data);
           }
+        }).catch((error) => {
+          console.log(error.response.data);
         });
-      console.log("Usuario eliminado:", response.data);
     } catch (error) {
       console.error("Error al eliminar el usuario:", error);
     }
@@ -143,6 +145,7 @@ export const AdminUser = () => {
     const handleRowClick = (record) => {
       const document = record.documentNumber;
       console.log("Documento seleccionado:", document);
+      navigate(`admin/users/profile/${document}`);
     };
 
     return (

@@ -37,8 +37,9 @@
       display: flex;
       font-size: xx-large;
       font-family: sans-serif;
-      color: white;
+      color: $secondary-color;
       font-weight: bold;
+      margin-bottom: 24px;
     
       &-subtitle {
         font-size: x-large;

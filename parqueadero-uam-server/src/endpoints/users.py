@@ -60,7 +60,9 @@ schema_patch = {
             'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
             'phoneNumber': {'type': 'string', 'required': False},
             'department':{'type':'string','required': False},
-            'municipality':{'type':'string','required': False}
+            'municipality':{'type':'string','required': False},
+            'active':{'type':'boolean'},
+            'password':{'type': 'string', 'required': False}, 
         }
 
 
@@ -368,6 +370,9 @@ def create_user_admin():
         if existing_user:
             return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST
         
+        
+        
+        
         email=request.form['email']
         # Verificar si ya existe un usuario con el mismo documentNumber
         existing_user_em = db['users'].find_one({'email': email})
@@ -463,11 +468,23 @@ def update_user_admin(documento):
         if 'phoneNumber' in request.form:
             if request.form['phoneNumber'] != "":
                 user['phoneNumber'] = request.form['phoneNumber']
-        updated_fields = {field: value for field, value in request.form.items() if field in schema}
+        if 'active' in request.form:
+            if request.form['active'] != "":
+                accessibility_str = request.form.get('active')
+                if accessibility_str is not None:
+                    accessibility_bool = accessibility_str.lower() == 'true'
+                else:
+                    accessibility_bool = False
+                user['active'] = accessibility_bool
+        if 'password' in request.form:
+            if request.form['password'] != "":
+                user['password'] = request.form['password']
+        updated_fields = {field: value for field, value in request.form.items() if field in schema and value != ""}
         validator = Validator(schema_patch)
         if not validator.validate(updated_fields):
             errors = validator.errors
             return {'error': errors}, HTTPStatus.BAD_REQUEST
+
         # Actualizar el documento en la base de datos
         db['users'].update_one({"documentNumber": documento}, {"$set": user})
 

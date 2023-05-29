@@ -35,16 +35,20 @@ const FormComponent = ({ onSubmit, loading }) => {
 
       const token = localStorage.getItem("token");
 
-      await axios.post("http://localhost:5000/api/v1/users/change-password", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-      }).then((response) => {if(response.status===200){navigate("/user/profile");}}).catch((error)=>{console.log(error.response.status)});
-      
-      form.resetFields();
-    } catch (error) {
-        if (error.response && error.response.status === 401){
+      await axios
+        .post("http://localhost:5000/api/v1/users/change-password", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            navigate("/user/profile");
+          }
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 401) {
             form.setFields([
               {
                 name: "contrasenaActual",
@@ -52,14 +56,10 @@ const FormComponent = ({ onSubmit, loading }) => {
               },
             ]);
           }
-        console.log("Error de solicitud:", error);
-        if (error.response) {
-          console.log("Código de error:", error.response.status);
-          console.log("Mensaje de error:", error.response.data);
-        } else {
-          console.log("Error desconocido:", error.message);
-        }
-      }
+        });
+    } catch (error) {
+      console.log("Error de solicitud:", error);
+    }
   };
 
   const onCancel = () => {

@@ -62,17 +62,16 @@ export const LoginForm = () => {
           localStorage.setItem("token", token);
           localStorage.setItem("refresh_token", refresh_token);
           const rol = getRolFromToken(token);
-          const activo = getActiveFromToken(token);
-            setTimeout(() => {
-              if (rol === "user") {
-                navigate("/user/profile");
-              } else if (rol === "delegate") {
-                navigate("/delegate");
-              } else {
-                navigate("/admin/profile");
-              }
-            }, 2000);
-          }
+          setTimeout(() => {
+            if (rol === "user") {
+              navigate("/user/profile");
+            } else if (rol === "delegate") {
+              navigate("/delegate");
+            } else {
+              navigate("/admin");
+            }
+          }, 2000);
+        }
       })
       .catch((error) => {
         if (error.response) {

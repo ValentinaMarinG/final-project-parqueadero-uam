@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Avatar, Col, Row, Table, Button, Spin } from "antd";
+import { Layout, Avatar, Col, Row, Table, Button, Spin, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import cupula from "../../assets/jpg/sobre_uam.jpg";
 import { UserMenuSider } from "../../components/MenuComponents/UserMenuSider/UserMenuSider";
@@ -14,6 +14,7 @@ export const User = () => {
   const [userData, setUserData] = useState(null);
   const [userPlates, setUserPlates] = useState([]);
   const [avatar, setAvatar] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   const handleAvatarChange = (event) => {
     const file = event.target.files[0];
@@ -49,10 +50,13 @@ export const User = () => {
           }
         );
         const userData = response.data;
+         if (userData.avatar) {
+          setAvatarUrl(avatarUrl);
+        
 
         setUserData(userData.data);
         setUserPlates([userData.data.plate]);
-      } catch (error) {
+      }} catch (error) {
         console.error(error);
       }
     };
@@ -66,8 +70,7 @@ export const User = () => {
   if (!userData) {
     return (
       <div className="cargando-pagina">
-        <Spin tip="Cargando" size="large">
-        </Spin>
+        <Spin tip="Cargando" size="large"></Spin>
       </div>
     );
   }
@@ -103,6 +106,11 @@ export const User = () => {
       ),
     },
   ];
+  const avatarU = `${process.env.PUBLIC_URL}/../../../parqueadero-uam-server/uploads/avatar/imagen.jpg`;
+
+/*   console.log(userData.avatar)
+  console.log(avatarU);
+ setAvatarUrl(avatarU); */
 
   return (
     <Layout>
@@ -124,12 +132,18 @@ export const User = () => {
           </div>
           <div className="principal">
             <Row gutter={[120, 120]}>
-            <Col>
+              <Col>
                 {avatar ? (
                   <Avatar
                     className="principal-avatar"
                     size={140}
                     src={URL.createObjectURL(avatar)}
+                  />
+                ) : avatarUrl ? (
+                  <Avatar
+                    className="principal-avatar"
+                    size={140}
+                    src={avatarUrl}
                   />
                 ) : (
                   <Avatar
