@@ -351,8 +351,6 @@ def read_one_admin(documento):
     return {"data": user}, HTTPStatus.OK
 
 
-
-
 #Crear un usuario, permiso de admin
 @users.route('/admin', methods=['POST'])
 @jwt_required()
@@ -402,6 +400,8 @@ def create_user_admin():
         return jsonify({"data": usuario_json}), HTTPStatus.CREATED
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
+
+
 
 def enviar_correo_sendgrid(destinatario, asunto, contenido):
     message = Mail(
