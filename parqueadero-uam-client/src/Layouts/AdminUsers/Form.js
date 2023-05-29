@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, setFieldValue } from "formik";
 import { Button, Input, Select, Row, Col } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
 
@@ -43,7 +43,7 @@ const validationSchema = Yup.object().shape({
     .required("El tipo de documento es requerido")
     .oneOf(
       [
-        "Tarjeta de identidad",
+        "Tarjeta de identidad",
         "Cédula de Ciudadanía",
         "Cédula de Extranjería",
         "Pasaporte",
@@ -56,25 +56,6 @@ const validationSchema = Yup.object().shape({
   department: Yup.string().required("El departamento es requerido"),
   municipality: Yup.string().required("El municipio es requerido"),
 });
-
-const onSubmit = (values) => {
-  const { confirmarContraseña, ...data } = values;
-
-  const formData = new FormData();
-  for (let key in data) {
-    formData.append(key, data[key]);
-  }
-  
-   axios
-    .post("http://localhost:5000/api/v1/users", formData)
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      // Manejar el error si ocurre
-      console.error(error);
-    }); 
-};
 
 export const RegisterForm = () => {
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
@@ -92,22 +73,28 @@ export const RegisterForm = () => {
     for (let key in data) {
       formData.append(key, data[key]);
     }
+    console.log("Form Data:", Object.fromEntries(formData));
+
+    const token = localStorage.getItem("token");
 
     axios
-      .post("http://localhost:5000/api/v1/users", formData)
+      .post("http://localhost:5000/api/v1/users/admin", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         if (response.status === 201) {
           setShowSuccessMessage(true);
           setTimeout(() => {
-            navigate("/LogIn");
+            navigate("/admin/users");
           }, 2000);
-
-          navigate("/LogIn");
         }
+        console.log("respuesta " + response.data);
       })
       .catch((error) => {
         // Manejar el error si ocurre
-        console.error(error);
+        console.error("error " + error);
       })
       .finally(() => {
         setSubmitting(false);
@@ -375,11 +362,11 @@ export const RegisterForm = () => {
               </Col>
             </Row>
             <div className="button-container">
-              <Button danger onClick={() => window.location.replace("/")}>
-                Cancelar
+              <Button danger>
+                <Link to={"/../admin/users"}>Cancelar</Link>
               </Button>
               <Button type="primary" htmlType="submit">
-                Regístrate
+                Regístrar
               </Button>
             </div>
           </Form>

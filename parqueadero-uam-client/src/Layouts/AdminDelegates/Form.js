@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
 
+
 const { Option } = Select;
 
 const initialValues = {
@@ -17,8 +18,9 @@ const initialValues = {
   confirmarContraseña: "",
   documentType: "",
   documentNumber: "",
-  department: "",
-  municipality: "",
+  position: "",
+  active: "",
+  parkingId:""
 };
 
 const validationSchema = Yup.object().shape({
@@ -53,8 +55,9 @@ const validationSchema = Yup.object().shape({
   documentNumber: Yup.string()
     .required("El número de documento es requerido")
     .matches(/^[0-9]+$/, "El número de documento debe contener solo números"),
-  department: Yup.string().required("El departamento es requerido"),
-  municipality: Yup.string().required("El municipio es requerido"),
+  position: Yup.string().required("El cargo es requerido"),
+  active: Yup.string().required("El estado es requerido"),
+
 });
 
 const onSubmit = (values) => {
@@ -64,10 +67,12 @@ const onSubmit = (values) => {
   for (let key in data) {
     formData.append(key, data[key]);
   }
-  
-   axios
-    .post("http://localhost:5000/api/v1/users", formData)
+  console.log("Form Data:", Object.fromEntries(formData));
+
+  axios
+    .post("http://localhost:5000/api/v1/auth/register", values)
     .then((response) => {
+      // Manejar la respuesta del servidor
       console.log(response.data);
     })
     .catch((error) => {
@@ -76,10 +81,10 @@ const onSubmit = (values) => {
     }); 
 };
 
-export const RegisterForm = () => {
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4NTE5NjgxOSwianRpIjoiNjg1ZmNkNTQtODc2Mi00MDEwLWI5ZTItYzMyMWE0MTQwMGJhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjY0NmQxNGVlNTAxMWY2OWU0M2Q4N2NhNyIsIm5iZiI6MTY4NTE5NjgxOSwiZXhwIjoxNjg1MjAwNDE5LCJyb2wiOiJhZG1pbiJ9.XbYUb1aL70EzhER1dFIFT9J5V460YxMdKGkW_nxIOvs"
+
+export const RegisterDelegateForm = () => {
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
-  const [departamentos, setDepartamentos] = useState([]);
-  const [municipios, setMunicipios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
@@ -92,18 +97,24 @@ export const RegisterForm = () => {
     for (let key in data) {
       formData.append(key, data[key]);
     }
+    console.log("Form Data:", Object.fromEntries(formData));
 
     axios
-      .post("http://localhost:5000/api/v1/users", formData)
+      .post("http://localhost:5000/api/v1/delegates", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         if (response.status === 201) {
           setShowSuccessMessage(true);
           setTimeout(() => {
-            navigate("/LogIn");
+            navigate("/admin");
           }, 2000);
 
-          navigate("/LogIn");
+          navigate("/admin");
         }
+        console.log(response.data);
       })
       .catch((error) => {
         // Manejar el error si ocurre
@@ -115,51 +126,7 @@ export const RegisterForm = () => {
       });
   };
 
-  useEffect(() => {
-    fetchDepartamentos();
-  }, []);
-
-  const fetchDepartamentos = async () => {
-    try {
-      const response = await axios.get(
-        "https://www.datos.gov.co/resource/xdk5-pm3f.json?$select=departamento"
-      );
-      const dataFilter = [...new Set(response.data.map(JSON.stringify))].map(
-        JSON.parse
-      );
-
-      const sortedDepartamentos = dataFilter.sort((a, b) =>
-        a.departamento.localeCompare(b.departamento)
-      );
-
-      setDepartamentos(sortedDepartamentos);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchMunicipios = async (departamento) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `https://www.datos.gov.co/resource/xdk5-pm3f.json?$select=municipio&departamento=${departamento}`
-      );
-
-      const sortedMunicipios = response.data.sort((a, b) =>
-        a.municipio.localeCompare(b.municipio)
-      );
-
-      setMunicipios(sortedMunicipios);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-    }
-  };
-
-  const handleDepartamentoChange = (value, { setFieldValue }) => {
-    setFieldValue("department", value);
-  };
+  
   const handleTipoDocumentoChange = (value, { setFieldValue }) => {
     setFieldValue("documentType", value);
   };
@@ -175,37 +142,37 @@ export const RegisterForm = () => {
   }, [showSuccessMessage]);
 
   return (
-    <div className="formulario-dimensiones">
+    <div className="formulario">
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={onSubmit}
       >
         {({ values, setFieldValue, setSubmitting, resetForm }) => (
-          <Form style={{ padding: "10px" }}>
-            {showSuccessMessage && (
-              <div style={{ color: "green", marginBottom: "10px" }}>
-                Registro exitoso
-              </div>
-            )}
-            <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
-              <Col span={12}>
-                <Field name="firstname" as={Input} placeholder="Nombre" />
-                <ErrorMessage
-                  name="firstname"
-                  component="div"
-                  className="error-message"
-                />
-              </Col>
-              <Col span={12}>
-                <Field name="lastname" as={Input} placeholder="Apellido" />
-                <ErrorMessage
-                  name="lastname"
-                  component="div"
-                  className="error-message"
-                />
-              </Col>
-            </Row>
+                    <Form style={{ padding: "10px" }}>
+                    {showSuccessMessage && (
+                      <div style={{ color: "green", marginBottom: "10px" }}>
+                        Registro exitoso
+                      </div>
+                    )}
+                    <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
+                      <Col span={12}>
+                        <Field name="firstname" as={Input} placeholder="Nombre" />
+                        <ErrorMessage
+                          name="firstname"
+                          component="div"
+                          className="error-message"
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <Field name="lastname" as={Input} placeholder="Apellido" />
+                        <ErrorMessage
+                          name="lastname"
+                          component="div"
+                          className="error-message"
+                        />
+                      </Col>
+                    </Row>
 
             <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
               <Col span={12}>
@@ -312,63 +279,114 @@ export const RegisterForm = () => {
                 />
               </Col>
             </Row>
-
-            <Row gutter={[16, 16]}>
-              <Col span={12} style={{ paddingRight: "10px" }}>
-                <Field name="department">
-                  {({ field }) => (
-                    <Select
-                      className="select-custom"
-                      name={field.name}
-                      value={field.value}
-                      onChange={(value) => {
-                        setFieldValue("department", value);
-                        fetchMunicipios(value);
-                      }}
-                    >
-                      <Option value="" disabled>
-                        Departamento
-                      </Option>
-                      {departamentos.map((departamento) => (
-                        <Option
-                          key={departamento.departamento}
-                          value={departamento.departamento}
-                        >
-                          {departamento.departamento}
-                        </Option>
-                      ))}
-                    </Select>
-                  )}
-                </Field>
+            
+              <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
+              <Col span={12}>
+                <Field
+                  name="position"
+                  as={Input}
+                  placeholder="Cargo"
+                />
                 <ErrorMessage
-                  name="department"
+                  name="position"
                   component="div"
                   className="error-message"
                 />
               </Col>
-              <Col span={12} style={{ paddingLeft: "10px" }}>
-                <Field
-                  className="select-custom"
-                  name="municipality"
-                  as={Select}
-                  placeholder="Municipio"
-                  disabled={loading || !municipios.length}
-                  onChange={(value) => setFieldValue("municipality", value)}
-                >
-                  <Option value="" disabled>
-                    Municipio
-                  </Option>
-                  {municipios.map((municipio) => (
-                    <Option
-                      key={municipio.municipio}
-                      value={municipio.municipio}
+              <Col span={12}>
+                <Field name="active">
+                  {({ field, form }) => (
+                    <Select
+                      className="select-custom"
+                      placeholder="Activo"
+                      value={field.value}
+                      onChange={(value) => {
+                        form.setFieldValue("active", value);
+                      }}
+                      onBlur={field.onBlur}
                     >
-                      {municipio.municipio}
-                    </Option>
-                  ))}
+                      <Option value="" disabled>
+                        Activo
+                      </Option>
+                      <Option value={true}>
+                        Si
+                      </Option>
+                      <Option value={false}>
+                        No
+                      </Option>
+                    </Select>
+                  )}
                 </Field>
+
                 <ErrorMessage
-                  name="municipality"
+                  name="active"
+                  component="div"
+                  className="error-message"
+                />
+              </Col>
+            </Row>
+            <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
+              <Col span={12}>
+                <Field name="asignarparqueadero">
+                  {({ field, form }) => (
+                    <Select
+                      className="select-custom"
+                      placeholder="Asignar parqueadero"
+                      value={field.value}
+                      onChange={(value) => {
+                        form.setFieldValue("asignarparqueadero", value);
+                      }}
+                      onBlur={field.onBlur}
+                    >
+                      <Option value="" disabled>
+                        Asignar parqueadero
+                      </Option>
+                      <Option value={true}>
+                        Si
+                      </Option>
+                      <Option value={false}>
+                        No
+                      </Option>
+                    </Select>
+                  )}
+                </Field>
+
+                <ErrorMessage
+                  name="asignarparqueadero"
+                  component="div"
+                  className="error-message"
+                />
+              </Col>
+              <Col span={12}>
+                <Field name="parkingId">
+                  {({ field, form }) => (
+                    <Select
+                      className="select-custom"
+                      placeholder="Parqueadero"
+                      value={field.value}
+                      onChange={(value) => {
+                        form.setFieldValue("parkingId", value);
+                      }}
+                      onBlur={field.onBlur}
+                    >
+                      <Option value="" disabled>
+                        Parqueadero
+                      </Option>
+                      <Option value="Cupula">
+                        Parqueadero Cúpula
+                      </Option>
+                      <Option value="Vagon">
+                        Parqueadero Vagon
+                      </Option>
+                      <Option value="Economia">
+                        Parqueadero Economia
+                      </Option>
+                    </Select>
+                  )}
+                </Field>
+
+                <ErrorMessage
+                  name="parkingId"
                   component="div"
                   className="error-message"
                 />
@@ -382,7 +400,7 @@ export const RegisterForm = () => {
                 Regístrate
               </Button>
             </div>
-          </Form>
+            </Form>
         )}
       </Formik>
     </div>

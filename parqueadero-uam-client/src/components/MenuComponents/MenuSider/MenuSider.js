@@ -12,6 +12,7 @@ import {
 } from "@ant-design/icons";
 
 export const MenuSider = (props) => {
+  const { onRutaSeleccionada } = props;
   const { Sider } = Layout;
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,21 +38,16 @@ export const MenuSider = (props) => {
       icon: <CarOutlined />,
       label: <span className="navbar-text">Parqueaderos</span>,
       subMenu: [
-        { key: "/parkings/list", icon:<CarryOutOutlined />, label: "  Listar Parqueadero" },
-        { key: "/parkings/new", icon:<PlusCircleOutlined />, label: "   Nuevo Parqueadero" },
+        { key: "/admin/parkings/list", icon:<CarryOutOutlined />, label: "  Listar Parqueadero" },
+        { key: "/admin/parkings/register", icon:<PlusCircleOutlined />, label: "   Nuevo Parqueadero" },
       ],
-    },
-    {
-      key: "/admin/statistics",
-      icon: <BarChartOutlined />,
-      label: <span className="navbar-text">Estadisticas</span>,
-    },
+    }
   ];
 
   const menuClick = (e) => {
     const path = e.key;
-    console.log("Di click en el menú " + path);
     navigate(path);
+    onRutaSeleccionada(path);
   };
 
   const itemRender = (item, index) => {

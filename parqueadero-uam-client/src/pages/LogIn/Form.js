@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Button, Input } from "antd";
+import { Alert, Button, Input } from "antd";
 import { useState } from "react";
 import {
   UserOutlined,
@@ -23,6 +23,17 @@ const getRolFromToken = (token) => {
     const decodedToken = jwtDecode(token);
     const rol = decodedToken?.rol;
     return rol;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+};
+
+const getActiveFromToken = (token) => {
+  try {
+    const decodedToken = jwtDecode(token);
+    const active = decodedToken?.active;
+    return active;
   } catch (error) {
     console.error("Error decoding token:", error);
     return null;
@@ -69,7 +80,7 @@ export const LoginForm = () => {
             error.response.data
           );
           setShowErrorMessage(true);
-          setErrorMessage("Usuario o contraseña incorrecta");
+          setErrorMessage(error.response.data.error);
         } else if (error.request) {
           console.error("Error de solicitud HTTP:", error.request);
         } else {

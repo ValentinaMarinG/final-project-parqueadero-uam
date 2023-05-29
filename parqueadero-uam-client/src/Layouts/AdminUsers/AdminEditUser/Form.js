@@ -5,6 +5,8 @@ import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -19,28 +21,22 @@ const initialValues = {
   documentNumber: "",
   department: "",
   municipality: "",
+  active: "",
 };
 
 const validationSchema = Yup.object().shape({
-  firstname: Yup.string().required("El nombre es requerido"),
-  lastname: Yup.string().required("El apellido es requerido"),
   email: Yup.string()
-    .email("Correo inválido")
-    .required("El correo es requerido"),
+    .email("Correo inválido"),
   phoneNumber: Yup.string()
-    .required("El celular es requerido")
     .matches(/^[0-9]+$/, "El celular debe contener solo números"),
   password: Yup.string()
-    .required("La contraseña es requerida")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
       "La contraseña debe contener al menos una mayúscula, una minúscula, un número y tener como mínimo 8 caracteres"
     ),
   confirmarContraseña: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Las contraseñas deben ser iguales")
-    .required("Debes confirmar la contraseña"),
+    .oneOf([Yup.ref("password"), null], "Las contraseñas deben ser iguales"),
   documentType: Yup.string()
-    .required("El tipo de documento es requerido")
     .oneOf(
       [
         "Tarjeta de identidad",
@@ -51,32 +47,12 @@ const validationSchema = Yup.object().shape({
       "Tipo de documento inválido"
     ),
   documentNumber: Yup.string()
-    .required("El número de documento es requerido")
-    .matches(/^[0-9]+$/, "El número de documento debe contener solo números"),
-  department: Yup.string().required("El departamento es requerido"),
-  municipality: Yup.string().required("El municipio es requerido"),
+    .matches(/^[0-9]+$/, "El número de documento debe contener solo números")
 });
 
-const onSubmit = (values) => {
-  const { confirmarContraseña, ...data } = values;
+export const AdminEditUserForm = () => {
+  const { document } = useParams();
 
-  const formData = new FormData();
-  for (let key in data) {
-    formData.append(key, data[key]);
-  }
-  
-   axios
-    .post("http://localhost:5000/api/v1/users", formData)
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      // Manejar el error si ocurre
-      console.error(error);
-    }); 
-};
-
-export const RegisterForm = () => {
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
   const [departamentos, setDepartamentos] = useState([]);
   const [municipios, setMunicipios] = useState([]);
@@ -93,20 +69,27 @@ export const RegisterForm = () => {
       formData.append(key, data[key]);
     }
 
+    const token = localStorage.getItem('token');
+    
     axios
-      .post("http://localhost:5000/api/v1/users", formData)
+      .patch(`http://localhost:5000/api/v1/users/${document}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200) {
           setShowSuccessMessage(true);
           setTimeout(() => {
-            navigate("/LogIn");
+            navigate("/admin");
           }, 2000);
-
-          navigate("/LogIn");
         }
       })
       .catch((error) => {
         // Manejar el error si ocurre
+        console.log(error.response.status);
+        console.log("-------------------");
+        console.log(error.response.data);
         console.error(error);
       })
       .finally(() => {
@@ -175,7 +158,7 @@ export const RegisterForm = () => {
   }, [showSuccessMessage]);
 
   return (
-    <div className="formulario-dimensiones">
+    <div className="formulario-tamaño">
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -313,7 +296,7 @@ export const RegisterForm = () => {
               </Col>
             </Row>
 
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
               <Col span={12} style={{ paddingRight: "10px" }}>
                 <Field name="department">
                   {({ field }) => (
@@ -374,12 +357,41 @@ export const RegisterForm = () => {
                 />
               </Col>
             </Row>
-            <div className="button-container">
-              <Button danger onClick={() => window.location.replace("/")}>
+            <Row gutter={[16, 16]} style={{ marginBottom: "10px" }}>
+              <Col span={12}>
+                <Field name="active" >
+                  {({ field, form }) => (
+                    <Select
+                      className="select-custom"
+                      placeholder="Activo"
+                      value={field.value}
+                      onChange={(value) => {
+                        form.setFieldValue("active", value);
+                      }}
+                      onBlur={field.onBlur}
+                    >
+                      <Option value="" disabled>
+                        Activo
+                      </Option>
+                      <Option value={true}>Si</Option>
+                      <Option value={false}>No</Option>
+                    </Select>
+                  )}
+                </Field>
+
+                <ErrorMessage
+                  name="active"
+                  component="div"
+                  className="error-message"
+                />
+              </Col>
+            </Row>
+            <div className="buttom-container">
+              <Button danger onClick={() => window.location.replace("/admin")}>
                 Cancelar
               </Button>
               <Button type="primary" htmlType="submit">
-                Regístrate
+                Guardar
               </Button>
             </div>
           </Form>

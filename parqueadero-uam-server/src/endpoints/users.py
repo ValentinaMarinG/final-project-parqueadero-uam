@@ -60,7 +60,9 @@ schema_patch = {
             'email': {'type': 'string', 'regex': r'^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$', 'coerce': lambda x: x.lower(), 'required': False},
             'phoneNumber': {'type': 'string', 'required': False},
             'department':{'type':'string','required': False},
-            'municipality':{'type':'string','required': False}
+            'municipality':{'type':'string','required': False},
+            'active':{'type':'boolean'},
+            'password':{'type': 'string', 'required': False}, 
         }
 
 
@@ -127,8 +129,6 @@ def create_user():
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
 
-
-
 @users.route('/avatar', methods=['PUT'])
 @jwt_required()
 def update_avatar():
@@ -143,39 +143,15 @@ def update_avatar():
         # Obtener el archivo de imagen
         avatar = request.files.get('avatar')
 
-        # Asignar un valor predeterminado a avatar_path
-        avatar_path = None
-
-        if avatar:
-            # Obtener la ruta absoluta de la carpeta "uploads"
-            uploads_folder = os.path.abspath('uploads')
-
-            # Verificar si la carpeta "uploads" existe, de lo contrario, crearla
-            if not os.path.exists(uploads_folder):
-                os.makedirs(uploads_folder)
-
-            # Obtener la ruta absoluta de la carpeta "avatar" dentro de "uploads"
-            avatar_folder = os.path.join(uploads_folder, 'avatar')
-
-            # Verificar si la carpeta "avatar" existe, de lo contrario, crearla
-            if not os.path.exists(avatar_folder):
-                os.makedirs(avatar_folder)
-
             # Guardar el archivo de imagen en la carpeta "avatar"
-            avatar_filename = secure_filename(avatar.filename)
-            avatar_path = os.path.join(avatar_folder, avatar_filename)
-            avatar.save(avatar_path)
-
-            # Obtener la ruta relativa del archivo incluyendo "uploads"
-            avatar_relative_path = os.path.join('uploads', os.path.relpath(avatar_path, uploads_folder))
-            user['avatar'] = avatar_relative_path
-            db['users'].update_one({"_id": obj_id}, {"$set": user})
+        avatar_filename = secure_filename(avatar.filename)
+        user['avatar'] = avatar_filename
+        db['users'].update_one({"_id": obj_id}, {"$set": user})
 
         return jsonify({'message': 'Foto de perfil actualizada correctamente'}), HTTPStatus.OK
 
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
-
 
 #Editar informacion propia, permiso de usuario
 @users.route('/', methods=['PUT','PATCH'])
@@ -239,18 +215,19 @@ def add_plate():
 @users.route("/plate", methods=['DELETE'])
 @jwt_required()
 def delete_plate(): 
-    claims = get_jwt()
-    rol = claims.get('rol')
-    if not rol == 'user':
-        return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
     user_id = get_jwt_identity()
     obj_id = ObjectId(user_id)
     user = db['users'].find_one({"_id": obj_id})
     if not user:
-            return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
-    placa_buscada = request.form['plate']
-    if 'plate' in user and not placa_buscada in user['plate']:
+        return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
+
+    placa_buscada = request.form.get('plate')
+    if not placa_buscada:
+        return jsonify({'error': 'La placa no fue proporcionada'}), HTTPStatus.BAD_REQUEST
+
+    if 'plate' in user and placa_buscada not in user['plate']:
         return jsonify({'error': 'La placa no existe'}), HTTPStatus.BAD_REQUEST
+
     db['users'].update_one({"_id": obj_id}, {"$pull": {"plate": placa_buscada}})
     return jsonify({'message': 'Placa eliminada correctamente'}), HTTPStatus.OK
 
@@ -370,6 +347,9 @@ def create_user_admin():
         if existing_user:
             return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST
         
+        
+        
+        
         email=request.form['email']
         # Verificar si ya existe un usuario con el mismo documentNumber
         existing_user_em = db['users'].find_one({'email': email})
@@ -397,7 +377,7 @@ def create_user_admin():
         # Guardar el usuario en la base de datos
         db['users'].insert_one(usuario_json)
 
-        enviar_correo_sendgrid(email, 'Bienvenido a parqueadero UAM', '¡Gracias por registrarte en nuestro sistema!')
+        enviar_correo_sendgrid(email, 'Bienvenido a parqueadero UAM', '¡Fuiste registrado en el sistema de parqueadero UAM por uno de nuestros administradores!')
         
         return jsonify({"data": usuario_json}), HTTPStatus.CREATED
     except Exception as e:
@@ -435,33 +415,51 @@ def update_user_admin(documento):
         
         # Actualizar los campos del usuario con los datos recibidos
         if 'documentType' in request.form:
-            user['documentType'] = request.form['documentType']
+            if request.form['documentType'] != "":
+                user['documentType'] = request.form['documentType']
         if 'documentNumber' in request.form:
-            #validar numero de documento
-            documentNumber=request.form['documentNumber']
-            # Verificar si ya existe un usuario con el mismo documentNumber
-            existing_user = db['users'].find_one({'documentNumber': documentNumber})
-            if existing_user:
-                return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST  
-            user['documentNumber'] = documentNumber
+            if request.form['documentNumber'] != "":
+                #validar numero de documento
+                documentNumber=request.form['documentNumber']
+                # Verificar si ya existe un usuario con el mismo documentNumber
+                existing_user = db['users'].find_one({'documentNumber': documentNumber})
+                if existing_user:
+                    return {'error': 'Ya existe un usuario con el mismo número de documento'}, HTTPStatus.BAD_REQUEST  
+                user['documentNumber'] = documentNumber
         if 'firstname' in request.form:
-            user['firstname'] = request.form['firstname']
+            if request.form['firstname'] != "":
+                user['firstname'] = request.form['firstname']
         if 'lastname' in request.form:
-            user['lastname'] = request.form['lastname']
+            if request.form['lastname'] != "":
+                user['lastname'] = request.form['lastname']
         if 'email' in request.form:
-            email=request.form['email']
-            # Verificar si ya existe un usuario con el mismo documentNumber
-            existing_user_em = db['users'].find_one({'email': email})
-            if existing_user_em:
-                return {'error': 'Ya existe un usuario con el mismo correo'}, HTTPStatus.BAD_REQUEST  
-            user['email'] = email
+            if request.form['email'] != "":
+                email=request.form['email']
+                # Verificar si ya existe un usuario con el mismo documentNumber
+                existing_user_em = db['users'].find_one({'email': email})
+                if existing_user_em:
+                    return {'error': 'Ya existe un usuario con el mismo correo'}, HTTPStatus.BAD_REQUEST  
+                user['email'] = email
         if 'phoneNumber' in request.form:
-            user['phoneNumber'] = request.form['phoneNumber']
-        updated_fields = {field: value for field, value in request.form.items() if field in schema}
+            if request.form['phoneNumber'] != "":
+                user['phoneNumber'] = request.form['phoneNumber']
+        if 'active' in request.form:
+            if request.form['active'] != "":
+                accessibility_str = request.form.get('active')
+                if accessibility_str is not None:
+                    accessibility_bool = accessibility_str.lower() == 'true'
+                else:
+                    accessibility_bool = False
+                user['active'] = accessibility_bool
+        if 'password' in request.form:
+            if request.form['password'] != "":
+                user['password'] = request.form['password']
+        updated_fields = {field: value for field, value in request.form.items() if field in schema and value != ""}
         validator = Validator(schema_patch)
         if not validator.validate(updated_fields):
             errors = validator.errors
             return {'error': errors}, HTTPStatus.BAD_REQUEST
+
         # Actualizar el documento en la base de datos
         db['users'].update_one({"documentNumber": documento}, {"$set": user})
 

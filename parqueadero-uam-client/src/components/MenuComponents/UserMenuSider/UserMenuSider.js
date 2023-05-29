@@ -1,7 +1,8 @@
 import React from "react";
 import "./UserMenuSider.scss";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Menu, Layout } from "antd";
+import { Menu, Layout, Input } from "antd";
+import { Modal } from "antd";
 import {
   UserOutlined,
   TeamOutlined,
@@ -16,18 +17,34 @@ export const UserMenuSider = ({ menuCollapsed }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalInputValue, setModalInputValue] = React.useState("");
+
+  const handleModalOpen = () => {
+    setModalVisible(true);
+  };
+  
+  const handleModalClose = () => {
+    setModalVisible(false);
+  };
+
+  const handleModalInputChange = (e) => {
+    setModalInputValue(e.target.value);
+  };
+
   const menuItems = [
     {
       key: "/user/profile",
       icon: <UserOutlined />,
       label: <span className="navbar-text">Perfil</span>,
-    },
-    {
-      key: "/user/cars",
-      icon: <TeamOutlined />,
-      label: <span className="navbar-text">Buscar mi carro</span>,
-    },    
+    }    
   ];
+
+  const handleModalSubmit = () => {
+    // Aquí puedes realizar la lógica con el valor del input del modal
+    console.log("Valor del input del modal:", modalInputValue);
+    handleModalClose();
+  };
 
   const menuClick = (e) => {
     const path = e.key;
@@ -49,6 +66,7 @@ export const UserMenuSider = ({ menuCollapsed }) => {
           {label}
         </div>
       </Menu.Item>
+      
     );
   };
 
@@ -62,5 +80,6 @@ export const UserMenuSider = ({ menuCollapsed }) => {
         {menuItems.map((item) => itemRender(item))}
       </Menu>
     </Sider>
+    
   );
 };

@@ -1,6 +1,9 @@
 @import "../../scss/index.scss";
 
-    .UserPage-header {
+.body{
+    background-color: $primary-color;
+}
+/*     .UserProfile-content {
         position: fixed;
         top: 0;
         left: 0;
@@ -12,9 +15,9 @@
         z-index: 1000;
         background-color: $secondary-color;
         padding:0
-    }
+    } */
 
-      .UserPage-content {
+      .UserProfile-content {
         min-height: calc(100vh - 75px);
         padding: 25px 0 0 25px;
         background-color: $primary-color;
@@ -37,8 +40,9 @@
       display: flex;
       font-size: xx-large;
       font-family: sans-serif;
-      color: white;
+      color: $secondary-color;
       font-weight: bold;
+      margin-bottom: 24px;
     
       &-subtitle {
         font-size: x-large;
@@ -135,7 +139,7 @@
     margin-right: 20px;
   }
 
-  .conatiner-info{
+  .user-info{
     margin-top: 20px;
   }
 
@@ -160,10 +164,6 @@
     padding: 5px;
   }
 
-  .ul{
-    padding-left: 0px;
-    margin: 0px;
-  }
 
   .cargando-pagina {
     position: absolute;
@@ -192,10 +192,24 @@
     background-color: $secondary-color;
   }
 
-  .modal-1{
-    width: 600px;
-  }
+  .ant-row{
+    margin-left: -75px;
+    margin-right: -75px;
+    display: flex;
+    margin-bottom: 20px;
+}
 
-  .input-placas{
-    width: 200px;
-  }
+.ant-col{
+    padding-left: 40px;
+    padding-right: 75px;
+    padding-bottom: 30px;
+}
+
+.input-imagen{
+    width: 156;
+}
+
+.subir{
+    background-color: $secondary-color;
+}
+
