@@ -38,7 +38,10 @@ export const LayoutGeneral = (props) => {
       <MenuSider menuCollapsed={menuCollapsed} onRutaSeleccionada={actualizarRutaMenuSider} />
       <Layout
         className="Layout-general"
-        style={{ marginLeft: menuCollapsed ? "0px" : "50px" }}
+        style={{
+          marginLeft: menuCollapsed ? "0px" : "50px",
+          backgroundColor: "white"
+        }}
       >
         <Header className="Layout-general-header">
           <MenuTop

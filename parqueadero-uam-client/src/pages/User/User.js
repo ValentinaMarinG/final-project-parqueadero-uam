@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Avatar, Col, Row, Table, Button, Spin, Input, Modal } from "antd";
+import {
+  Layout,
+  Avatar,
+  Col,
+  Row,
+  Table,
+  Button,
+  Spin,
+  Input,
+  Modal,
+} from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import cupula from "../../assets/jpg/sobre_uam.jpg";
 import { UserMenuSider } from "../../components/MenuComponents/UserMenuSider/UserMenuSider";
@@ -10,17 +20,17 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Form } from "antd";
 
+
 export const User = () => {
   const token = localStorage.getItem("token");
   const [userData, setUserData] = useState(null);
   const [userPlates, setUserPlates] = useState([]);
   const [avatar, setAvatar] = useState(null);
-
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const [visible2, setVisible2] = useState(false);
   const [plate, setPlate] = useState("");
-
 
   const handleOpenModal = (plate) => {
     console.log("modal");
@@ -29,7 +39,7 @@ export const User = () => {
   };
 
   const handleSave = () => {
-    addPlate(plate)
+    addPlate(plate);
     setVisible(false);
   };
 
@@ -61,15 +71,27 @@ export const User = () => {
   const handleUploadAvatar = () => {
     const formData = new FormData();
     formData.append("avatar", avatar);
+
     axios
       .put("http://localhost:5000/api/v1/users/avatar", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
-      .then((response) => {})
-      .catch((error) => {});
+      .then((response) => {
+        const imageUrl = response.data.data.avatar;
+        console.log(imageUrl);
+        // Almacenar la URL de la imagen en el almacenamiento local
+        localStorage.setItem("avatarUrl", imageUrl);
+
+        setAvatarUrl(imageUrl);
+      })
+      .catch((error) => {
+        console.log(error.response.status);
+        // Manejar el error
+      });
   };
+
 
   const addPlate = (plate) => {
     const formData = new FormData();
@@ -87,18 +109,21 @@ export const User = () => {
   const deletePlate = (plate) => {
     const formData = new FormData();
     formData.append("plate", plate);
-    console.log(token)
+    console.log(token);
     axios
-    .delete("http://localhost:5000/api/v1/users/plate", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: formData,
-    })
-      .then((response) => {console.log(response.data)})
-      .catch((error) => {console.log(error)});
+      .delete("http://localhost:5000/api/v1/users/plate", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: formData,
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
 
   useEffect(() => {
     const getUserData = async (token) => {
@@ -112,9 +137,10 @@ export const User = () => {
           }
         );
         const userData = response.data;
-
         setUserData(userData.data);
         setUserPlates([userData.data.plate]);
+        const imageUrl = response.data.data.avatar;
+        localStorage.setItem("avatarUrl", imageUrl);
       } catch (error) {
         console.error(error);
       }
@@ -122,9 +148,10 @@ export const User = () => {
 
     getUserData(token);
   }, [token]);
-
+  console.log(localStorage.getItem("avatarUrl"));
   const [menuCollapsed, setMenuCollapsed] = useState(false);
   const { Content, Header, Footer } = Layout;
+  const avatarImageUrl = `../../assets/png/uploads/${localStorage.getItem("avatarUrl")}`;
 
   if (!userData) {
     return (
@@ -193,6 +220,12 @@ export const User = () => {
                     size={140}
                     src={URL.createObjectURL(avatar)}
                   />
+                ) : avatarImageUrl ? (
+                  <Avatar
+                    className="principal-avatar"
+                    size={140}
+                    src={avatarImageUrl}
+                  />
                 ) : (
                   <Avatar
                     className="principal-avatar"
@@ -234,13 +267,15 @@ export const User = () => {
                   </label>
                 </div>
                 <div className="botones-perfil">
-                <Input
-                  className="input-imagen"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                />
-                <Button className="subir-avatar" onClick={handleUploadAvatar}>Subir Avatar</Button>
+                  <Input
+                    className="input-imagen"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                  />
+                  <Button className="subir-avatar" onClick={handleUploadAvatar}>
+                    Subir Avatar
+                  </Button>
                   <Button className="button-edit">
                     <Link to={"/../user/edit"}>Editar información</Link>
                   </Button>

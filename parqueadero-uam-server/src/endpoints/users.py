@@ -129,8 +129,6 @@ def create_user():
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
 
-
-
 @users.route('/avatar', methods=['PUT'])
 @jwt_required()
 def update_avatar():
@@ -145,39 +143,15 @@ def update_avatar():
         # Obtener el archivo de imagen
         avatar = request.files.get('avatar')
 
-        # Asignar un valor predeterminado a avatar_path
-        avatar_path = None
-
-        if avatar:
-            # Obtener la ruta absoluta de la carpeta "uploads"
-            uploads_folder = os.path.abspath('uploads')
-
-            # Verificar si la carpeta "uploads" existe, de lo contrario, crearla
-            if not os.path.exists(uploads_folder):
-                os.makedirs(uploads_folder)
-
-            # Obtener la ruta absoluta de la carpeta "avatar" dentro de "uploads"
-            avatar_folder = os.path.join(uploads_folder, 'avatar')
-
-            # Verificar si la carpeta "avatar" existe, de lo contrario, crearla
-            if not os.path.exists(avatar_folder):
-                os.makedirs(avatar_folder)
-
             # Guardar el archivo de imagen en la carpeta "avatar"
-            avatar_filename = secure_filename(avatar.filename)
-            avatar_path = os.path.join(avatar_folder, avatar_filename)
-            avatar.save(avatar_path)
-
-            # Obtener la ruta relativa del archivo incluyendo "uploads"
-            avatar_relative_path = os.path.join('uploads', os.path.relpath(avatar_path, uploads_folder))
-            user['avatar'] = avatar_relative_path
-            db['users'].update_one({"_id": obj_id}, {"$set": user})
+        avatar_filename = secure_filename(avatar.filename)
+        user['avatar'] = avatar_filename
+        db['users'].update_one({"_id": obj_id}, {"$set": user})
 
         return jsonify({'message': 'Foto de perfil actualizada correctamente'}), HTTPStatus.OK
 
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
-
 
 #Editar informacion propia, permiso de usuario
 @users.route('/', methods=['PUT','PATCH'])

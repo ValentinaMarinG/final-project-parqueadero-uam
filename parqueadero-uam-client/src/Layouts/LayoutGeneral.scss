@@ -26,6 +26,7 @@ $widthLeftMenu: 80px;
         flex-wrap: wrap;
     }
 
+    
     &-footer{
         padding: 25px;
         background-color: $primary-color;
@@ -36,6 +37,12 @@ $widthLeftMenu: 80px;
 
     .ant-layout-sider-children{
         width: 300;
+        background-color: white;
     }
+
+}
+
+.ant-layout{
+    background-color: white;
 }
 
