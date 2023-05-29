@@ -46,7 +46,6 @@ export const MenuSider = (props) => {
 
   const menuClick = (e) => {
     const path = e.key;
-    console.log("Di click en el menú " + path);
     navigate(path);
     onRutaSeleccionada(path);
   };

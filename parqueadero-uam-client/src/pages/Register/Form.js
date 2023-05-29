@@ -64,12 +64,10 @@ const onSubmit = (values) => {
   for (let key in data) {
     formData.append(key, data[key]);
   }
-  console.log("Form Data:", Object.fromEntries(formData));
   
    axios
     .post("http://localhost:5000/api/v1/users", formData)
     .then((response) => {
-      // Manejar la respuesta del servidor
       console.log(response.data);
     })
     .catch((error) => {
@@ -94,7 +92,6 @@ export const RegisterForm = () => {
     for (let key in data) {
       formData.append(key, data[key]);
     }
-    console.log("Form Data:", Object.fromEntries(formData));
 
     axios
       .post("http://localhost:5000/api/v1/users", formData)
@@ -107,7 +104,6 @@ export const RegisterForm = () => {
 
           navigate("/LogIn");
         }
-        console.log(response.data);
       })
       .catch((error) => {
         // Manejar el error si ocurre
@@ -128,7 +124,6 @@ export const RegisterForm = () => {
       const response = await axios.get(
         "https://www.datos.gov.co/resource/xdk5-pm3f.json?$select=departamento"
       );
-      //console.log(response);
       const dataFilter = [...new Set(response.data.map(JSON.stringify))].map(
         JSON.parse
       );

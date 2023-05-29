@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, setFieldValue } from "formik";
 import { Button, Input, Select, Row, Col } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
 
@@ -57,7 +57,6 @@ const validationSchema = Yup.object().shape({
   municipality: Yup.string().required("El municipio es requerido"),
 });
 
-
 export const RegisterForm = () => {
   const [selectedTipoDocumento, setSelectedTipoDocumento] = useState("");
   const [departamentos, setDepartamentos] = useState([]);
@@ -65,7 +64,7 @@ export const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const onSubmit = (values, { setSubmitting, resetForm }) => {
     const { confirmarContraseña, ...data } = values;
@@ -76,27 +75,26 @@ export const RegisterForm = () => {
     }
     console.log("Form Data:", Object.fromEntries(formData));
 
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem("token");
 
     axios
-      .post("http://localhost:5000/api/v1/users/admin", formData,  
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+      .post("http://localhost:5000/api/v1/users/admin", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         if (response.status === 201) {
           setShowSuccessMessage(true);
           setTimeout(() => {
-            //navigate("/admin/users");
+            navigate("/admin/users");
           }, 2000);
         }
-        console.log("respuesta "+response.data);
+        console.log("respuesta " + response.data);
       })
       .catch((error) => {
         // Manejar el error si ocurre
-        console.error("error "+error);
+        console.error("error " + error);
       })
       .finally(() => {
         setSubmitting(false);
@@ -127,7 +125,6 @@ export const RegisterForm = () => {
       console.error(error);
     }
   };
-
 
   const fetchMunicipios = async (departamento) => {
     try {
@@ -366,10 +363,10 @@ export const RegisterForm = () => {
               </Col>
             </Row>
             <div className="button-container">
-              <Button >
-                Cancelar
+              <Button danger>
+                <Link to={"/../admin/users"}>Cancelar</Link>
               </Button>
-              <Button type="primary" htmlType="submit" >
+              <Button type="primary" htmlType="submit">
                 Regístrar
               </Button>
             </div>
