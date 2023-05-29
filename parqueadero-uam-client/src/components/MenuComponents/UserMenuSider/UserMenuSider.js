@@ -37,12 +37,7 @@ export const UserMenuSider = ({ menuCollapsed }) => {
       key: "/user/profile",
       icon: <UserOutlined />,
       label: <span className="navbar-text">Perfil</span>,
-    },
-    {
-      key: "/user/plate",
-      icon: <TeamOutlined />,
-      label: <span className="navbar-text">Buscar mi carro</span>,
-    },    
+    }    
   ];
 
   const handleModalSubmit = () => {
