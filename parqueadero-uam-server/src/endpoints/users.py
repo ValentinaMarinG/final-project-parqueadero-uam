@@ -241,18 +241,19 @@ def add_plate():
 @users.route("/plate", methods=['DELETE'])
 @jwt_required()
 def delete_plate(): 
-    claims = get_jwt()
-    rol = claims.get('rol')
-    if not rol == 'user':
-        return {"error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
     user_id = get_jwt_identity()
     obj_id = ObjectId(user_id)
     user = db['users'].find_one({"_id": obj_id})
     if not user:
-            return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
-    placa_buscada = request.form['plate']
-    if 'plate' in user and not placa_buscada in user['plate']:
+        return jsonify({'error': 'Usuario no encontrado'}), HTTPStatus.NOT_FOUND
+
+    placa_buscada = request.form.get('plate')
+    if not placa_buscada:
+        return jsonify({'error': 'La placa no fue proporcionada'}), HTTPStatus.BAD_REQUEST
+
+    if 'plate' in user and placa_buscada not in user['plate']:
         return jsonify({'error': 'La placa no existe'}), HTTPStatus.BAD_REQUEST
+
     db['users'].update_one({"_id": obj_id}, {"$pull": {"plate": placa_buscada}})
     return jsonify({'message': 'Placa eliminada correctamente'}), HTTPStatus.OK
 

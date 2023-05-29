@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Avatar, Col, Row, Table, Button, Spin } from "antd";
+import { Layout, Avatar, Col, Row, Table, Button, Spin, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import cupula from "../../assets/jpg/sobre_uam.jpg";
 import { UserMenuSider } from "../../components/MenuComponents/UserMenuSider/UserMenuSider";
@@ -128,7 +128,7 @@ export const UserProfile = () => {
             </div>
           </Col>
           <Col>
-            <div className="personal-info">
+            <div className="user-info">
               <label className="label-titulo-info">Información personal</label>
               <br />
               <label className="label">
@@ -159,12 +159,13 @@ export const UserProfile = () => {
           </Col>
         </Row>
         <Row gutter={[120, 120]}>
-        <input
+        <Input
+                className="input-imagen"
                 type="file"
                 accept="image/*"
                 onChange={handleAvatarChange}
               />
-              <Button onClick={handleUploadAvatar}>Subir Avatar</Button>
+              <Button className="subir" onClick={handleUploadAvatar}>Subir Avatar</Button>
         </Row>
         <div className="container-table">
           <Row gutter={[50, 50]}>
@@ -173,7 +174,7 @@ export const UserProfile = () => {
                 className="table"
                 columns={columns}
                 dataSource={data}
-                pagination={{ defaultPageSize: 3 }}
+                pagination={{ defaultPageSize: 2 }}
               />
             </Col>
           </Row>

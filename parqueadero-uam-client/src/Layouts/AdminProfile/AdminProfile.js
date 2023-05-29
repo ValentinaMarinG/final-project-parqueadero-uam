@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Avatar, Col, Row, Table, Button, Spin, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import cupula from "../../assets/jpg/sobre_uam.jpg";
-import { UserMenuSider } from "../../components/MenuComponents/UserMenuSider/UserMenuSider";
-import { MenuTop } from "../../components/MenuComponents/MenuTop/MenuTop";
-import { FooterPage } from "../../components/FooterPage/FooterPage";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import './AdminProfile.scss'
 
 export const AdminProfile = () => {
@@ -59,7 +54,7 @@ export const AdminProfile = () => {
 
   if (!userData) {
     return (
-      <div className="cargando-pagina">
+      <div className="cargando-pagina-1">
         <Spin tip="Cargando" size="large"></Spin>
       </div>
     );
@@ -76,63 +71,65 @@ export const AdminProfile = () => {
 
   return (
     <Layout>
-      <Content className="AdminProfile-content">
-        <div className="content-titu">
+      <Content className="AdminProfile-content-1">
+        <div className="content-titu-1">
           <label>Parqueadero UAM</label>
-          <label className="content-titu-subtitle">Perfil Administrador</label>
+          <label className="content-titu-subtitle-1">Perfil Administrador</label>
         </div>
         <Row justify="center" align="middle">
-          <Col span={24} className="avatar-col">
+            <div>
+          <Col span={24} className="avatar-col-1">
             {avatar ? (
               <Avatar
-                className="principle-avatar"
+                className="principle-avatar-1"
                 size={140}
                 src={URL.createObjectURL(avatar)}
               />
             ) : (
               <Avatar
-                className="principle-avatar"
+                className="principle-avatar-1"
                 size={140}
                 icon={<UserOutlined />}
               />
             )}
             <Input
-              className="botones-avatar"
+              className="botones-avatar-1"
               type="file"
               accept="image/*"
               onChange={handleAvatarChange}
             />
-            <Button className="botones-avatar" onClick={handleUploadAvatar}>Subir Avatar</Button>
+            <Button className="botones-avatar-1" onClick={handleUploadAvatar}>Subir Avatar</Button>
           </Col>
-          <Col span={24} className="info-col">
-            <div className="conatiner-info">
-              <label className="label-titulo-info">
+          </div>
+          <Col span={24} className="info-col-1">
+            <div className="conatiner-info-1">
+              <label className="label-titulo-info-1">
                 Tu información personal
               </label>
               <br />
-              <label className="label">
+              <label className="label-1">
                 Nombre:{" "}
-                <label className="custom-label">
+                <label className="custom-label-1">
                   {firstname} {lastname}
                 </label>
               </label>
               <br />
-              <label className="label">
-                Correo: <label className="custom-label">{email}</label>
+              <label className="label-1">
+                Correo: <label className="custom-label-1">{email}</label>
               </label>
               <br />
-              <label className="label">
+              <label className="label-1">
                 Tipo de documento:{" "}
-                <label className="custom-label">{documentType}</label>
+                <label className="custom-label-1">{documentType}</label>
               </label>
               <br />
-              <label className="label">
+              <label className="label-1">
                 Documento:{" "}
-                <label className="custom-label">{documentNumber}</label>
+                <label className="custom-label-1">{documentNumber}</label>
               </label>
               <br />
-              <label className="label">
-                Contacto: <label className="custom-label">{phoneNumber}</label>
+              <label className="label-1">
+                Contacto: <label className="custom-label-1">{phoneNumber}</label>
               </label>
             </div>
           </Col>
