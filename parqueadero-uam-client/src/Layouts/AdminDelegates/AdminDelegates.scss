@@ -1,0 +1,41 @@
+@import "../../scss/index.scss";
+
+.dashboard-delegates {
+    min-height: calc(100vh - 95px);
+    padding-top: 10px;
+    background-color: $primary-color;
+}
+
+.div-delegates{
+    height: 400px;
+    width: 100%;
+}
+
+.title {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
+    font-size: xx-large;
+    font-family: sans-serif;
+    color: $secondary-color;
+    font-weight: bold;
+    margin-top: 60px;
+
+    &-subtitle {
+      font-size: x-large;
+      font-weight: normal;
+      color: white;
+    }
+}
+
+.lista-delegados{
+    width: 700px;
+}
+
+.botones{
+    margin-left: 20px;
+    margin-right: 20px;
+    size: 40px;
+     background-color: $secondary-color;
+}

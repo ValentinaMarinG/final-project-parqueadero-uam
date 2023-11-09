@@ -26,13 +26,16 @@
     &__right{
         right: 0%;
         position: fixed;
+        align-items: center;
+        margin-bottom: 15px;
+        display: flex;
     }
 
     button{
         color: white;
         margin-left: 5px;
         cursor: pointer;
-        font-size: 25px;
+        font-size: 30px;
         &:hover{
             color: white;
         }

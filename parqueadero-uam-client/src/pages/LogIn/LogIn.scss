@@ -1,0 +1,172 @@
+@import "../../scss/index.scss";
+
+.Layout-LogIn {
+    background-color: $primary-color;
+  
+    .Layout-LogIn-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      z-index: 1000;
+      padding: 0px;
+      background-color: $primary-color;
+      height: 50px;
+  
+    }
+
+    &-content{
+        min-height: fit-content;
+        padding: 25px 0 0 25px;
+    }
+}
+
+.container-principal{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  width: 450px;
+  background-color: white;
+  border-radius: 25px;
+  position: relative;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%);
+  z-index: 1;
+  margin-top: 5%;
+  
+
+    &-texto{
+        flex-direction: column;
+        align-items: center;
+        font-family: sans-serif;
+        color: black;
+        font-size: inherit;
+        position: fixed;
+        text-align: center;
+        width: 100%;
+        top:90px;
+
+        &-subrayado{
+            text-decoration: underline;
+        }
+    }
+
+    &-usuario{
+        margin-top: 80px;
+        display: flex;
+        align-items: start;
+        justify-content: left;
+        font-family: sans-serif;
+    }
+
+    &-contraseña{
+        margin-top: 10px;
+        display: flex;
+        align-items: start;
+        justify-content: left;
+        font-family: sans-serif;
+    }
+
+    .inputs-box{
+        margin-top: 160px;
+    }
+
+}
+  
+.container-secundario{
+    height: 70px;
+    width: 450px;
+    background-color: $secondary-color;
+    border-radius: 23px 23px 0px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top:0;
+
+    &-titulo{
+        font-family: sans-serif;
+        font-weight: bold;
+        color: $primary-color;
+        font-size: x-large;
+    }
+}
+
+.username{
+    width: 80%;
+    margin: 10px 10px;
+    margin-top: 5px;
+}
+
+.password{
+    width: 80%;
+    margin: 10px 10px;
+    margin-top: 5px;
+}
+
+.button-log-in{
+    margin-top: 10px;
+    size: 20;
+    background-color: $primary-color;
+}
+
+.registrarse {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    top: 67%;
+    bottom: -20px; 
+    z-index: 0;
+
+    &-texto{
+        font-family: sans-serif;
+        font-size: 16px;
+        color: white;
+        margin-top: 30px;
+    }
+    
+    .button-link {
+      color: white;
+      font-family: sans-serif;
+      font-size: 16px;
+      text-decoration: underline;
+      border: none;
+      background-color: transparent;
+      padding: 5px;
+      
+      &:hover {
+        color: #40a9ff;
+        background-color: transparent;
+      }
+      
+      &:focus {
+        color: #1890ff;
+        background-color: transparent;
+      }
+    }
+}
+  
+.bottom-logo {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35vw;
+    height: auto;
+}
+
+.button-log-in {
+    width: 100%;
+  }
+
+  .error-message-password {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+  }

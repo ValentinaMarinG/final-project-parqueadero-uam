@@ -1,0 +1,132 @@
+@import "../../scss/index.scss";
+
+.Layout-delegate {
+  background-color: $primary-color;
+
+  &-header {
+    background-color: $secondary-color;
+    display: flex;
+  }
+}
+
+.content {
+  min-height: calc(100vh - 95px);
+  padding-top: 40px;
+  background-color: $primary-color;
+
+  &-delegate-title {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
+    font-size: xx-large;
+    font-family: sans-serif;
+    color: $secondary-color;
+    font-weight: bold;
+    margin-top: 40px;
+
+    &-subtitle {
+      font-size: x-large;
+      font-weight: normal;
+      color: white;
+    }
+  }
+
+  &-statistics {
+    padding-top: 30px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    font-size: xx-large;
+    font-family: sans-serif;
+    color: white;
+
+    .column {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      padding-bottom: 30px;
+      font-size: large;
+
+      &-box {
+        background-color: white;
+        border-radius: 5px;
+        color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+  .input-placas {
+    color: white;
+    font-family: sans-serif;
+    font-size: large;
+    font-weight: lighter;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding-bottom: 30px;
+
+    .placa {
+      width: 20%;
+    }
+
+    .text {
+      padding-right: 10px;
+    }
+  }
+
+  .container-table-unpaid {
+    justify-content: center;
+    display: initial;
+    padding-top: 10px;
+    flex-flow: 0;
+    text-align: center;
+
+    .row2 {
+      row-gap: 0px;
+      flex-flow: initial;
+    }
+
+    .title-table {
+      font-family: sans-serif;
+      font-size: large;
+      color: white;
+      align-self: center;
+      padding-bottom: 20px;
+    }
+
+    .table-column {
+      width: 60%;
+    }
+
+    .table {
+      width: 100%;
+      flex: 2;
+      margin-top: 10px;
+    }
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 10px;
+
+    .button {
+      margin-bottom: 20px;
+      margin-top: 7px;
+      background-color: $primary-color-hover;
+      color: white;
+      width: 160px;
+    }
+  }
+}
+
+.footer {
+  background-color: $primary-color;
+}
+
